@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { BalanceError, computeBalances, simplifyDebts } from '../balance.js';
-import { splitAmount } from '../split.js';
+import { BalanceError, computeBalances, simplifyDebts } from '../balance';
+import { splitAmount } from '../split';
 
 const shared = (paidBy: string, amount: bigint, members: string[], rotation = '1') => ({
   paidByMemberId: paidBy,

@@ -14,7 +14,7 @@ import {
   daysInMonth,
   fromParts,
   toParts,
-} from './dates.js';
+} from './dates';
 
 export type Recurrence = 'MONTHLY' | 'BIMONTHLY' | 'QUARTERLY' | 'YEARLY' | 'CUSTOM';
 

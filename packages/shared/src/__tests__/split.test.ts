@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { SplitError, splitAmount } from '../split.js';
+import { SplitError, splitAmount } from '../split';
 
 const sum = (shares: { amountMinor: bigint }[]) => shares.reduce((a, s) => a + s.amountMinor, 0n);
 

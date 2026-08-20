@@ -1,6 +1,6 @@
-export * from './money.js';
-export * from './split.js';
-export * from './balance.js';
-export * from './dates.js';
-export * from './bills.js';
-export * as schemas from './schemas.js';
+export * from './money';
+export * from './split';
+export * from './balance';
+export * from './dates';
+export * from './bills';
+export * as schemas from './schemas';

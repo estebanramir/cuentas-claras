@@ -6,7 +6,7 @@ import {
   parseAmount,
   parseRate,
   toBaseMinor,
-} from '../money.js';
+} from '../money';
 
 describe('divRoundHalfUp', () => {
   it('redondea la mitad hacia arriba', () => {

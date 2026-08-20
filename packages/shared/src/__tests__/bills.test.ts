@@ -6,7 +6,7 @@ import {
   isMonday,
   todayInBogota,
   weekday,
-} from '../dates.js';
+} from '../dates';
 import {
   BillError,
   DEFAULT_REMINDER_DAYS,
@@ -15,7 +15,7 @@ import {
   estimateNextAmount,
   nextDueDate,
   reminderFor,
-} from '../bills.js';
+} from '../bills';
 
 describe('aritmetica de fechas', () => {
   it('suma meses recortando al ultimo dia', () => {

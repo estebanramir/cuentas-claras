@@ -1,0 +1,345 @@
+// Cuentas Claras — esquema de datos.
+//
+// Dos decisiones cargan el peso del diseño:
+//   1. Member esta separado de User, y su userId es opcional. Eso es lo que
+//      permite meter en un grupo a alguien que no tiene la app instalada.
+//   2. BillInstance se materializa por adelantado. "Que vence este mes" es un
+//      SELECT, no un calculo de recurrencias en vivo.
+//
+// Todo monto se guarda como BigInt en la unidad minima de su moneda.
+// Toda fecha civil (vencimientos, fecha del gasto) es @db.Date, sin hora.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum SplitMethod {
+  EQUAL
+  PERCENT
+  EXACT
+  SHARES
+}
+
+enum Recurrence {
+  MONTHLY
+  BIMONTHLY
+  QUARTERLY
+  YEARLY
+  CUSTOM
+}
+
+enum InstanceStatus {
+  PENDING
+  PAID
+  SKIPPED
+}
+
+enum MemberRole {
+  OWNER
+  MEMBER
+}
+
+enum NotifyKind {
+  BILL_BEFORE
+  BILL_DUE_TODAY
+  BILL_OVERDUE
+  WEEKLY_DIGEST
+}
+
+model User {
+  id           String   @id @default(cuid())
+  googleSub    String   @unique
+  email        String   @unique
+  name         String
+  avatarUrl    String?
+  baseCurrency String   @default("COP")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  devices         Device[]
+  memberships     Member[]
+  createdGroups   Group[]        @relation("GroupCreator")
+  createdExpenses Expense[]      @relation("ExpenseCreator")
+  refreshTokens   RefreshToken[]
+  notifications   NotifyLog[]
+}
+
+model RefreshToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Device {
+  id            String   @id @default(cuid())
+  userId        String
+  expoPushToken String   @unique
+  platform      String   @default("android")
+  lastSeenAt    DateTime @default(now())
+  createdAt     DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Group {
+  id              String    @id @default(cuid())
+  name            String
+  defaultCurrency String    @default("COP")
+  createdById     String
+  archivedAt      DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  createdBy   User         @relation("GroupCreator", fields: [createdById], references: [id])
+  members     Member[]
+  expenses    Expense[]
+  settlements Settlement[]
+  bills       Bill[]
+  categories  Category[]
+}
+
+/// Un participante del grupo. Sin userId es una persona sin cuenta en la app:
+/// suma y resta en los balances igual que cualquiera, pero no inicia sesion.
+model Member {
+  id          String     @id @default(cuid())
+  groupId     String
+  userId      String?
+  displayName String
+  /// Se guarda para enlazar a la persona si algun dia entra con esa cuenta.
+  inviteEmail String?
+  role        MemberRole @default(MEMBER)
+  joinedAt    DateTime   @default(now())
+  removedAt   DateTime?
+
+  group           Group          @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user            User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  expensesPaid    Expense[]      @relation("ExpensePayer")
+  shares          ExpenseShare[]
+  settlementsFrom Settlement[]   @relation("SettlementFrom")
+  settlementsTo   Settlement[]   @relation("SettlementTo")
+  billsPaid       Bill[]         @relation("BillPayer")
+  billShares      BillShare[]
+
+  @@unique([groupId, userId])
+  @@index([groupId])
+}
+
+model Category {
+  id       String  @id @default(cuid())
+  /// Null = categoria de sistema, disponible en todos los grupos.
+  groupId  String?
+  name     String
+  icon     String  @default("receipt")
+  color    String  @default("neutral")
+  isSystem Boolean @default(false)
+
+  group    Group?    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  expenses Expense[]
+  bills    Bill[]
+
+  @@unique([groupId, name])
+  @@index([groupId])
+}
+
+model Expense {
+  id          String   @id @default(cuid())
+  groupId     String
+  categoryId  String?
+  description String
+  date        DateTime @db.Date
+
+  /// Monto tal como se registro, en unidades minimas de `currency`.
+  amountMinor     BigInt
+  currency        String
+  /// Tasa congelada en la fecha del gasto, escalada a 8 decimales.
+  fxRate          Decimal @default(1) @db.Decimal(20, 8)
+  /// amountMinor convertido a la moneda base. Es lo que se suma en balances.
+  amountBaseMinor BigInt
+
+  paidByMemberId String
+  isShared       Boolean     @default(true)
+  splitMethod    SplitMethod @default(EQUAL)
+
+  billInstanceId String?   @unique
+  notes          String?
+  createdById    String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  /// Borrado logico: un gasto que desaparece rompe los balances historicos.
+  deletedAt      DateTime?
+
+  group        Group          @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  category     Category?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  paidBy       Member         @relation("ExpensePayer", fields: [paidByMemberId], references: [id])
+  createdBy    User           @relation("ExpenseCreator", fields: [createdById], references: [id])
+  billInstance BillInstance?  @relation(fields: [billInstanceId], references: [id], onDelete: SetNull)
+  shares       ExpenseShare[]
+
+  @@index([groupId, date])
+  @@index([groupId, deletedAt])
+  @@index([categoryId])
+}
+
+model ExpenseShare {
+  id              String  @id @default(cuid())
+  expenseId       String
+  memberId        String
+  /// Porcentaje, partes o monto exacto segun el metodo del gasto.
+  weight          Decimal @db.Decimal(20, 6)
+  /// Lo que efectivamente le toco, ya resuelto el redondeo.
+  amountBaseMinor BigInt
+
+  expense Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  member  Member  @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([expenseId, memberId])
+  @@index([memberId])
+}
+
+/// Un abono de una persona a otra para saldar. No borra gastos: el balance
+/// vuelve a cero por suma, no por olvido.
+model Settlement {
+  id           String   @id @default(cuid())
+  groupId      String
+  fromMemberId String
+  toMemberId   String
+  date         DateTime @db.Date
+
+  amountMinor     BigInt
+  currency        String
+  fxRate          Decimal @default(1) @db.Decimal(20, 8)
+  amountBaseMinor BigInt
+
+  note      String?
+  createdAt DateTime @default(now())
+
+  group Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  from  Member @relation("SettlementFrom", fields: [fromMemberId], references: [id])
+  to    Member @relation("SettlementTo", fields: [toMemberId], references: [id])
+
+  @@index([groupId, date])
+}
+
+/// La plantilla de una factura recurrente: "Luz, mensual, dia 15, 50/50".
+model Bill {
+  id         String  @id @default(cuid())
+  groupId    String
+  name       String
+  categoryId String?
+
+  estimatedAmountMinor BigInt
+  currency             String @default("COP")
+
+  recurrence    Recurrence
+  anchorDate    DateTime   @db.Date
+  dueDayOfMonth Int?
+  intervalDays  Int?
+
+  reminderDaysBefore Int[]       @default([5, 2, 0])
+  payerMemberId      String
+  splitMethod        SplitMethod @default(EQUAL)
+
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  group     Group          @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  category  Category?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  payer     Member         @relation("BillPayer", fields: [payerMemberId], references: [id])
+  shares    BillShare[]
+  instances BillInstance[]
+
+  @@index([groupId, isActive])
+}
+
+/// El reparto por defecto que hereda cada pago de esta factura.
+model BillShare {
+  id       String  @id @default(cuid())
+  billId   String
+  memberId String
+  weight   Decimal @db.Decimal(20, 6)
+
+  bill   Bill   @relation(fields: [billId], references: [id], onDelete: Cascade)
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([billId, memberId])
+}
+
+/// Una ocurrencia concreta: "Luz, vence el 15 de marzo". El cron las crea con
+/// 60 dias de anticipacion para que siempre haya sobre que avisar.
+model BillInstance {
+  id                  String         @id @default(cuid())
+  billId              String
+  dueDate             DateTime       @db.Date
+  expectedAmountMinor BigInt
+  status              InstanceStatus @default(PENDING)
+
+  paidAt          DateTime?
+  paidAmountMinor BigInt?
+  paidCurrency    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bill    Bill        @relation(fields: [billId], references: [id], onDelete: Cascade)
+  expense Expense?
+  notices NotifyLog[]
+
+  @@unique([billId, dueDate])
+  @@index([status, dueDate])
+}
+
+/// Tasas del dia, en pesos por unidad de la moneda extranjera.
+model FxRate {
+  id         String   @id @default(cuid())
+  date       DateTime @db.Date
+  currency   String
+  copPerUnit Decimal  @db.Decimal(20, 8)
+  fetchedAt  DateTime @default(now())
+
+  @@unique([date, currency])
+  @@index([currency, date])
+}
+
+/// Se escribe antes de enviar. El indice unico es lo que impide que un
+/// reintento del cron mande el mismo aviso dos veces el mismo dia.
+///
+/// La deduplicacion va por `dedupeKey` y no por billInstanceId directamente:
+/// en Postgres dos NULL son distintos entre si dentro de un indice unico, asi
+/// que el resumen semanal (que no cuelga de ninguna factura) se podria enviar
+/// repetido. La llave siempre trae texto.
+model NotifyLog {
+  id             String     @id @default(cuid())
+  userId         String
+  kind           NotifyKind
+  billInstanceId String?
+  /// kind + instancia, o solo kind cuando el aviso no cuelga de una factura.
+  dedupeKey      String
+  sentOn         DateTime   @db.Date
+  title          String
+  body           String
+  deliveredAt    DateTime?
+  error          String?
+  createdAt      DateTime   @default(now())
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  billInstance BillInstance? @relation(fields: [billInstanceId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sentOn, dedupeKey])
+  @@index([userId, sentOn])
+}

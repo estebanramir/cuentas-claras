@@ -7,7 +7,7 @@
  */
 
 import { z } from 'zod';
-import { CURRENCY_CODES } from './money.js';
+import { CURRENCY_CODES } from './money';
 
 export const minorAmount = z
   .string()
