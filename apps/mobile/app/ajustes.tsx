@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import { api } from '../src/api';
 import { useAuth } from '../src/auth';
-import { useGrupo } from '../src/casa';
+import { useGrupo } from '../src/grupo';
 import { Bloque, Boton, Campo, Cifra, Etiqueta, Fila, Seccion, Texto } from '../src/components/ui';
 import { registrarDispositivo } from '../src/push';
 import { useInvalidarTodo, useMiembros } from '../src/queries';
@@ -86,14 +86,14 @@ export default function Ajustes() {
         </Texto>
       </View>
 
-      <Seccion titulo="Como te ven en esta casa">
+      <Seccion titulo="Como te ven en este grupo">
         <View style={estilos.formulario}>
           <Campo
-            etiqueta={`Tu nombre en ${grupo?.name ?? 'esta casa'}`}
+            etiqueta={`Tu nombre en ${grupo?.name ?? 'este grupo'}`}
             value={miNombre}
             onChangeText={setMiNombre}
             placeholder={grupo?.displayName ?? ''}
-            ayuda="Solo cambia aqui. En tus otras casas sigues llamandote como alli decidiste."
+            ayuda="Solo cambia aqui. En tus otros grupos sigues llamandote como alli decidiste."
           />
           {errorNombre ? (
             <Texto tono="debes" menor style={{ marginBottom: espacio.md }}>
@@ -111,7 +111,7 @@ export default function Ajustes() {
         </View>
       </Seccion>
 
-      <Seccion titulo={`Quienes estan en ${grupo?.name ?? 'la casa'}`}>
+      <Seccion titulo={`Quienes estan en ${grupo?.name ?? 'el grupo'}`}>
         <Bloque>
           {(miembros.data ?? []).map((miembro, indice) => (
             <Fila
@@ -164,14 +164,14 @@ export default function Ajustes() {
         </View>
       </Seccion>
 
-      <Seccion titulo="Mis casas">
+      <Seccion titulo="Mis grupos">
         <View style={estilos.formulario}>
           <Texto tono="tinta2" menor style={{ marginBottom: espacio.md }}>
-            Cada casa lleva cuentas aparte: los gastos y los balances de una no se mezclan
-            con los de otra.
+            Cada grupo lleva cuentas aparte: los gastos y los balances de uno no se mezclan
+            con los de otro.
           </Texto>
-          <Boton variante="secundario" onPress={() => router.push('/casas')}>
-            Cambiar o crear casa
+          <Boton variante="secundario" onPress={() => router.push('/grupos')}>
+            Cambiar o crear grupo
           </Boton>
         </View>
       </Seccion>

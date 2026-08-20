@@ -2,7 +2,7 @@ import { parseAmount } from '@cuentas/shared';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import { useGrupo } from '../src/casa';
+import { useGrupo } from '../src/grupo';
 import { Boton, Campo, Cargando, Etiqueta, Texto } from '../src/components/ui';
 import { hoy, plata } from '../src/format';
 import { useBalances, useSaldar } from '../src/queries';

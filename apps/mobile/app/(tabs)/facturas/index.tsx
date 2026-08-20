@@ -2,7 +2,7 @@ import Feather from '@expo/vector-icons/Feather';
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
-import { useGrupo } from '../../../src/casa';
+import { useGrupo } from '../../../src/grupo';
 import {
   Bloque,
   Boton,

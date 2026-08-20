@@ -363,21 +363,21 @@ async function main(): Promise<void> {
   check('trae categorias ordenadas', Array.isArray(reporte.data.categories), reporte.data.categories);
   check('el mes viene con nombre', typeof reporte.data.label === 'string' && reporte.data.label.length > 0, reporte.data.label);
 
-  section('Varias casas');
-  // El escenario real: Esteban tiene su casa con Ana y ademas la de sus papas.
-  const casaPapas = await api('/api/groups', {
+  section('Varios grupos');
+  // El escenario real: Esteban tiene su grupo con Ana y ademas el de sus papas.
+  const grupoPapasCreado = await api('/api/groups', {
     method: 'POST',
     token: tokenE,
     body: { name: 'Casa de mis papas', defaultCurrency: 'COP' },
   });
-  check('se crea una segunda casa', casaPapas.status === 201, casaPapas.data);
-  const grupoPapas: string = casaPapas.data.id;
-  const memberEPapas: string = casaPapas.data.members[0].id;
+  check('se crea un segundo grupo', grupoPapasCreado.status === 201, grupoPapasCreado.data);
+  const grupoPapas: string = grupoPapasCreado.data.id;
+  const memberEPapas: string = grupoPapasCreado.data.members[0].id;
 
   check(
-    'el mismo usuario tiene un miembro distinto en cada casa',
+    'el mismo usuario tiene un miembro distinto en cada grupo',
     memberEPapas !== memberE,
-    { casa: memberE, papas: memberEPapas },
+    { propio: memberE, papas: memberEPapas },
   );
 
   const renombrado = await api(`/api/groups/${grupoPapas}/members/${memberEPapas}`, {
@@ -385,12 +385,12 @@ async function main(): Promise<void> {
     token: tokenE,
     body: { displayName: 'Estebitan' },
   });
-  check('puede llamarse distinto en la otra casa', renombrado.data.displayName === 'Estebitan', renombrado.data);
+  check('puede llamarse distinto en el otro grupo', renombrado.data.displayName === 'Estebitan', renombrado.data);
 
   const sesionE = await api('/api/me', { token: tokenE });
-  check('la sesion lista las dos casas', sesionE.data.groups.length === 2, sesionE.data.groups);
+  check('la sesion lista los dos grupos', sesionE.data.groups.length === 2, sesionE.data.groups);
   const nombres = sesionE.data.groups.map((g: any) => g.displayName).sort();
-  check('con el nombre que le corresponde a cada una', nombres.join('|') === 'Esteban|Estebitan', nombres);
+  check('con el nombre que le corresponde a cada uno', nombres.join('|') === 'Esteban|Estebitan', nombres);
 
   const mama = await api(`/api/groups/${grupoPapas}/members`, {
     method: 'POST', token: tokenE, body: { displayName: 'Mama' },
@@ -401,7 +401,7 @@ async function main(): Promise<void> {
     method: 'POST',
     token: tokenE,
     body: {
-      groupId: grupoPapas, description: 'Mercado de la casa de mis papas', amount: '80000',
+      groupId: grupoPapas, description: 'Mercado en casa de mis papas', amount: '80000',
       currency: 'COP', date: today, paidByMemberId: memberMama, isShared: true,
       splitMethod: 'EQUAL',
       shares: [{ memberId: memberEPapas }, { memberId: memberMama }],
@@ -410,21 +410,21 @@ async function main(): Promise<void> {
 
   const balPapas = await api(`/api/groups/${grupoPapas}/balances`, { token: tokenE });
   const miBalancePapas = balPapas.data.members.find((m: any) => m.memberId === memberEPapas);
-  check('en la casa de los papas debe 40.000', miBalancePapas.balance === '-40000', miBalancePapas);
+  check('en el grupo de los papas debe 40.000', miBalancePapas.balance === '-40000', miBalancePapas);
 
   const balCasa = await api(`/api/groups/${groupId}/balances`, { token: tokenE });
   const miBalanceCasa = balCasa.data.members.find((m: any) => m.memberId === memberE);
   check(
-    'ese gasto no toco el balance de la otra casa',
+    'ese gasto no toco el balance del otro grupo',
     miBalanceCasa.balance !== miBalancePapas.balance,
-    { casa: miBalanceCasa.balance, papas: miBalancePapas.balance },
+    { propio: miBalanceCasa.balance, papas: miBalancePapas.balance },
   );
 
   const gastosPapas = await api(`/api/expenses?groupId=${grupoPapas}`, { token: tokenE });
-  check('los gastos de cada casa estan separados', gastosPapas.data.length === 1, gastosPapas.data.length);
+  check('los gastos de cada grupo estan separados', gastosPapas.data.length === 1, gastosPapas.data.length);
 
   const anaEnPapas = await api(`/api/groups/${grupoPapas}/balances`, { token: tokenA });
-  check('Ana no puede ver la casa de los papas', anaEnPapas.status === 403, anaEnPapas.data);
+  check('Ana no puede ver el grupo de los papas', anaEnPapas.status === 403, anaEnPapas.data);
 
   const cruzado = await api('/api/expenses', {
     method: 'POST',
@@ -435,7 +435,7 @@ async function main(): Promise<void> {
       shares: [{ memberId: memberEPapas }],
     },
   });
-  check('no se puede meter a alguien de otra casa en un gasto', cruzado.status === 400, cruzado.data);
+  check('no se puede meter a alguien de otro grupo en un gasto', cruzado.status === 400, cruzado.data);
 
   section('Coherencia final');
   const finales = await api(`/api/groups/${groupId}/balances`, { token: tokenE });

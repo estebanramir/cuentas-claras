@@ -27,7 +27,7 @@ export const GET = handler(async (request) => {
       groupId: m.groupId,
       memberId: m.id,
       name: m.group.name,
-      /// Como te llamas dentro de esa casa: puede ser distinto en cada una.
+      /// Como te llamas dentro de ese grupo: puede ser distinto en cada uno.
       displayName: m.displayName,
       defaultCurrency: m.group.defaultCurrency,
       role: m.role,

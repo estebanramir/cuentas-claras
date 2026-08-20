@@ -104,4 +104,4 @@ export function useAuth(): Contexto {
   return contexto;
 }
 
-// La casa activa vive en casa.tsx, que necesita useAuth y no al reves.
+// El grupo activo vive en grupo.tsx, que necesita useAuth y no al reves.

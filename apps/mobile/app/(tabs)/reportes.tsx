@@ -1,7 +1,7 @@
 import { addMonths, formatMonth } from '@cuentas/shared';
 import { useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useGrupo } from '../../src/casa';
+import { useGrupo } from '../../src/grupo';
 import {
   Bloque,
   BotonPresionable,

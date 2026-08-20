@@ -10,10 +10,10 @@ type Params = { params: Promise<{ id: string; memberId: string }> };
 const patchInput = z.object({ displayName: z.string().min(1).max(60) });
 
 /**
- * Cambiar como se llama alguien dentro de esta casa.
+ * Cambiar como se llama alguien dentro de este grupo.
  *
  * El nombre vive en el Member, no en el User, asi que la misma persona puede
- * ser "Esteban" en una casa y "Estebitan" en la de sus papas sin que una cosa
+ * ser "Esteban" en un grupo y "Estebitan" en el de sus papas sin que una cosa
  * pise la otra.
  */
 export const PATCH = handler(async (request: Request, { params }: Params) => {
@@ -22,7 +22,7 @@ export const PATCH = handler(async (request: Request, { params }: Params) => {
   const yo = await requireMembership(userId, id);
 
   const objetivo = await prisma.member.findFirst({ where: { id: memberId, groupId: id, removedAt: null } });
-  if (!objetivo) throw notFound('Esa persona no esta en la casa');
+  if (!objetivo) throw notFound('Esa persona no esta en el grupo');
 
   // Cualquiera puede renombrarse a si mismo o a las personas sin cuenta; para
   // cambiarle el nombre a otro que si tiene cuenta hay que ser el dueño.
@@ -42,7 +42,7 @@ export const PATCH = handler(async (request: Request, { params }: Params) => {
 });
 
 /**
- * Sacar a alguien de la casa. Es baja logica: sus gastos siguen contando en el
+ * Sacar a alguien del grupo. Es baja logica: sus gastos siguen contando en el
  * historico, porque borrarlos descuadraria los balances de todos los demas.
  */
 export const DELETE = handler(async (request: Request, { params }: Params) => {
@@ -51,11 +51,11 @@ export const DELETE = handler(async (request: Request, { params }: Params) => {
   const yo = await requireMembership(userId, id);
 
   const objetivo = await prisma.member.findFirst({ where: { id: memberId, groupId: id, removedAt: null } });
-  if (!objetivo) throw notFound('Esa persona no esta en la casa');
+  if (!objetivo) throw notFound('Esa persona no esta en el grupo');
   if (objetivo.id !== yo.id && yo.role !== 'OWNER') throw forbidden('No puedes sacar a esa persona');
 
   const restantes = await prisma.member.count({ where: { groupId: id, removedAt: null } });
-  if (restantes <= 1) throw badRequest('La casa se quedaria sin nadie');
+  if (restantes <= 1) throw badRequest('El grupo se quedaria sin nadie');
 
   // Con saldo pendiente, sacarlo dejaria una deuda sin dueño.
   const { groupBalances } = await import('@/lib/balances');

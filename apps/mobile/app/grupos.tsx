@@ -4,18 +4,18 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { api } from '../src/api';
 import { useAuth } from '../src/auth';
-import { useCasa } from '../src/casa';
-import { Bloque, Boton, Campo, Etiqueta, Fila, Seccion, Texto } from '../src/components/ui';
+import { useGrupos } from '../src/grupo';
+import { Bloque, Boton, Campo, Fila, Seccion, Texto } from '../src/components/ui';
 import { espacio, usePaleta } from '../src/theme';
 
 /**
- * Cambiar de casa y crear casas nuevas.
+ * Cambiar de grupo y crear grupos nuevos.
  *
- * Cada casa lleva sus propias cuentas: los gastos, las facturas y los balances
- * de una no se mezclan con los de otra, aunque seas la misma persona.
+ * Cada grupo lleva sus propias cuentas: los gastos, las facturas y los
+ * balances de uno no se mezclan con los de otro, aunque seas la misma persona.
  */
-export default function Casas() {
-  const { casa, casas, cambiar } = useCasa();
+export default function Grupos() {
+  const { grupo, grupos, cambiar } = useGrupos();
   const { refrescar } = useAuth();
   const router = useRouter();
   const p = usePaleta();
@@ -28,24 +28,24 @@ export default function Casas() {
 
   const crear = async () => {
     setError(null);
-    if (!nombre.trim()) return setError('Ponle un nombre a la casa');
+    if (!nombre.trim()) return setError('Ponle un nombre al grupo');
     setGuardando(true);
     try {
-      const nueva = await api<{ id: string }>('/api/groups', {
+      const nuevo = await api<{ id: string }>('/api/groups', {
         method: 'POST',
         body: { name: nombre.trim(), defaultCurrency: 'COP' },
       });
-      // La sesion trae la lista de casas, asi que hay que releerla antes de
-      // poder cambiarse a la recien creada.
+      // La sesion trae la lista de grupos, asi que hay que releerla antes de
+      // poder cambiarse al recien creado.
       await refrescar();
 
       if (miNombre.trim()) {
         const miembros = await api<{ id: string; userId: string | null }[]>(
-          `/api/groups/${nueva.id}/members`,
+          `/api/groups/${nuevo.id}/members`,
         );
         const yo = miembros.find((m) => m.userId !== null);
         if (yo) {
-          await api(`/api/groups/${nueva.id}/members/${yo.id}`, {
+          await api(`/api/groups/${nuevo.id}/members/${yo.id}`, {
             method: 'PATCH',
             body: { displayName: miNombre.trim() },
           });
@@ -53,13 +53,13 @@ export default function Casas() {
         }
       }
 
-      cambiar(nueva.id);
+      cambiar(nuevo.id);
       setNombre('');
       setMiNombre('');
       setCreando(false);
       router.back();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'No pudimos crear la casa');
+      setError(e instanceof Error ? e.message : 'No pudimos crear el grupo');
     } finally {
       setGuardando(false);
     }
@@ -73,46 +73,44 @@ export default function Casas() {
     >
       <View style={estilos.intro}>
         <Texto tono="tinta2" menor>
-          Cada casa lleva cuentas aparte. Puedes tener un nombre distinto en cada una.
+          Cada grupo lleva cuentas aparte. Puedes tener un nombre distinto en cada uno.
         </Texto>
       </View>
 
       <Bloque>
-        {casas.map((c, indice) => {
-          const activa = c.groupId === casa?.groupId;
+        {grupos.map((g, indice) => {
+          const activo = g.groupId === grupo?.groupId;
           return (
             <Fila
-              key={c.groupId}
+              key={g.groupId}
               primera={indice === 0}
-              titulo={c.name}
-              detalle={`Alli eres ${c.displayName}`}
+              titulo={g.name}
+              detalle={`Alli eres ${g.displayName}`}
               onPress={() => {
-                cambiar(c.groupId);
+                cambiar(g.groupId);
                 router.back();
               }}
-              derecha={
-                activa ? <Feather name="check" size={18} color={p.acento} /> : null
-              }
+              derecha={activo ? <Feather name="check" size={18} color={p.acento} /> : null}
             />
           );
         })}
       </Bloque>
 
       {creando ? (
-        <Seccion titulo="Nueva casa">
+        <Seccion titulo="Nuevo grupo">
           <View style={estilos.formulario}>
             <Campo
-              etiqueta="Nombre de la casa"
+              etiqueta="Nombre del grupo"
               value={nombre}
               onChangeText={setNombre}
-              placeholder="Casa de mis papas"
+              placeholder="Casa de mis papas, Viaje a Cartagena..."
               autoFocus
             />
             <Campo
               etiqueta="Como te llamas alli (opcional)"
               value={miNombre}
               onChangeText={setMiNombre}
-              placeholder="Tu nombre en esta casa"
+              placeholder="Tu nombre en este grupo"
               ayuda="Si lo dejas vacio usamos el de tu cuenta."
             />
             {error ? (
@@ -121,7 +119,7 @@ export default function Casas() {
               </Texto>
             ) : null}
             <Boton onPress={crear} cargando={guardando}>
-              Crear la casa
+              Crear el grupo
             </Boton>
             <Boton variante="texto" onPress={() => setCreando(false)} style={{ marginTop: espacio.xs }}>
               Cancelar
@@ -131,7 +129,7 @@ export default function Casas() {
       ) : (
         <View style={estilos.formulario}>
           <Boton variante="secundario" onPress={() => setCreando(true)} style={{ marginTop: espacio.xl }}>
-            Crear otra casa
+            Crear otro grupo
           </Boton>
         </View>
       )}

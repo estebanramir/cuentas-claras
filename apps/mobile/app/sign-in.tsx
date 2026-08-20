@@ -34,7 +34,7 @@ export default function Entrar() {
         </View>
         <Titulo style={{ fontSize: 30, marginTop: espacio.xl }}>Cuentas Claras</Titulo>
         <Texto tono="tinta2" style={{ marginTop: espacio.sm, textAlign: 'center', maxWidth: 280 }}>
-          Los gastos de la casa y las facturas que vienen, en un solo lugar.
+          Los gastos compartidos y las facturas que vienen, en un solo lugar.
         </Texto>
       </View>
 

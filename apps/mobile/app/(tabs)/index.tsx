@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { api } from '../../src/api';
 import { useAuth } from '../../src/auth';
-import { useGrupo } from '../../src/casa';
+import { useGrupo } from '../../src/grupo';
 import {
   Bloque,
   Boton,
@@ -65,7 +65,7 @@ export default function Inicio() {
       refreshControl={<RefreshControl refreshing={recargando} onRefresh={recargar} tintColor={p.apagado} />}
     >
       <View style={estilos.encabezado}>
-        <BotonPresionable onPress={() => router.push('/casas')} style={estilos.selectorCasa}>
+        <BotonPresionable onPress={() => router.push('/grupos')} style={estilos.selectorGrupo}>
           <View style={estilos.selectorTexto}>
             <Texto fuerte numberOfLines={1}>
               {grupo.name}
@@ -175,7 +175,7 @@ function PrimerGrupo() {
   const [error, setError] = useState<string | null>(null);
 
   const crear = async () => {
-    if (!nombre.trim()) return setError('Ponle un nombre a la casa');
+    if (!nombre.trim()) return setError('Ponle un nombre al grupo');
     setCreando(true);
     setError(null);
     try {
@@ -185,7 +185,7 @@ function PrimerGrupo() {
       });
       await refrescar();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'No pudimos crear la casa');
+      setError(e instanceof Error ? e.message : 'No pudimos crear el grupo');
     } finally {
       setCreando(false);
     }
@@ -193,9 +193,9 @@ function PrimerGrupo() {
 
   return (
     <View style={[estilos.primerGrupo, { backgroundColor: p.fondo }]}>
-      <Texto style={[tipo.titulo, { textAlign: 'center' }]}>Empecemos por una casa</Texto>
+      <Texto style={[tipo.titulo, { textAlign: 'center' }]}>Empecemos por un grupo</Texto>
       <Texto tono="tinta2" style={{ textAlign: 'center', marginTop: espacio.sm, marginBottom: espacio.xl }}>
-        Aqui van los gastos compartidos. Despues puedes crear mas casas, cada una con
+        Aqui van los gastos compartidos. Despues puedes crear mas grupos, cada uno con
         sus propias cuentas.
       </Texto>
       <Campo etiqueta="Nombre" value={nombre} onChangeText={setNombre} placeholder="Casa" />
@@ -205,7 +205,7 @@ function PrimerGrupo() {
         </Texto>
       ) : null}
       <Boton onPress={crear} cargando={creando}>
-        Crear la casa
+        Crear el grupo
       </Boton>
     </View>
   );
@@ -220,7 +220,7 @@ const estilos = StyleSheet.create({
     paddingBottom: espacio.sm,
   },
   iconoCabecera: { padding: espacio.sm },
-  selectorCasa: { flex: 1, paddingVertical: espacio.xs },
+  selectorGrupo: { flex: 1, paddingVertical: espacio.xs },
   selectorTexto: { flexDirection: 'row', alignItems: 'center', gap: espacio.xs },
   saldo: { paddingHorizontal: espacio.lg, paddingTop: espacio.lg, paddingBottom: espacio.sm },
   acciones: { flexDirection: 'row', gap: espacio.md, marginTop: espacio.xl },
