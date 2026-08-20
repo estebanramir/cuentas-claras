@@ -1,0 +1,886 @@
+<title>Cuentas Claras</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+
+<style>
+:root{
+  --paper:#F6F7F5; --surface:#FFFFFF; --surface-2:#EFF2EF;
+  --ink:#151C19; --ink-2:#3E4A45; --muted:#6B7873; --rule:#DCE2DE;
+  --accent:#1E5C4C; --accent-2:#E2EDE8;
+  --ok:#2C6A46; --danger:#8E3A33; --warn:#7E5314;
+  --sans:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#101412; --surface:#171D1A; --surface-2:#1E2622;
+    --ink:#E7EDE9; --ink-2:#B6C2BC; --muted:#8B9A93; --rule:#2A332E;
+    --accent:#78C4A8; --accent-2:#1B2E28;
+    --ok:#7CC49A; --danger:#D98C84; --warn:#D3A45F;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#101412; --surface:#171D1A; --surface-2:#1E2622;
+  --ink:#E7EDE9; --ink-2:#B6C2BC; --muted:#8B9A93; --rule:#2A332E;
+  --accent:#78C4A8; --accent-2:#1B2E28;
+  --ok:#7CC49A; --danger:#D98C84; --warn:#D3A45F;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--serif); font-size:17px; line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:66rem;margin-inline:auto;padding:0 1.5rem}
+
+/* ---------- header ---------- */
+.masthead{border-bottom:1px solid var(--rule);padding:4.5rem 0 2.25rem}
+.eyebrow{
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 1.1rem
+}
+h1{
+  font-family:var(--sans);font-weight:700;font-size:clamp(2.6rem,7vw,4.2rem);
+  line-height:.98;letter-spacing:-.028em;margin:0;text-wrap:balance
+}
+.dek{
+  font-size:1.24rem;line-height:1.5;color:var(--ink-2);max-width:36rem;margin:1.15rem 0 0
+}
+.factbar{
+  display:flex;flex-wrap:wrap;gap:0 2.5rem;margin-top:2.4rem;
+  border-top:1px solid var(--rule);padding-top:1.25rem
+}
+.fact{padding:.35rem 0}
+.fact dt{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 .2rem
+}
+.fact dd{margin:0;font-family:var(--sans);font-weight:600;font-size:.98rem;letter-spacing:-.01em}
+
+/* ---------- toc ---------- */
+.toc{padding:2rem 0 .5rem;border-bottom:1px solid var(--rule)}
+.toc ol{
+  list-style:none;margin:0;padding:0;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));gap:.15rem 2rem
+}
+.toc li{margin:0;max-width:none}
+.toc a{
+  display:flex;gap:.7rem;align-items:baseline;text-decoration:none;color:var(--ink-2);
+  font-family:var(--sans);font-size:.92rem;padding:.3rem 0;border-bottom:1px solid transparent
+}
+.toc a:hover{color:var(--accent)}
+.toc a span{font-family:var(--mono);font-size:.72rem;color:var(--muted);min-width:1.4rem}
+
+/* ---------- sections ---------- */
+section{
+  display:grid;grid-template-columns:4.5rem minmax(0,1fr);gap:0 2rem;
+  padding:3.4rem 0;border-bottom:1px solid var(--rule)
+}
+section:last-of-type{border-bottom:0}
+.snum{
+  font-family:var(--mono);font-size:.78rem;color:var(--muted);
+  padding-top:.55rem;letter-spacing:.02em
+}
+.sbody{min-width:0}
+h2{
+  font-family:var(--sans);font-weight:600;font-size:1.72rem;letter-spacing:-.022em;
+  line-height:1.18;margin:0 0 1.1rem;text-wrap:balance
+}
+h3{
+  font-family:var(--sans);font-weight:600;font-size:1.06rem;letter-spacing:-.008em;
+  margin:2.1rem 0 .6rem
+}
+h4{
+  font-family:var(--mono);font-weight:500;font-size:.72rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);margin:1.7rem 0 .55rem
+}
+p,li{max-width:38rem}
+p{margin:0 0 1rem}
+ul,ol{padding-left:1.15rem;margin:0 0 1rem}
+li{margin:.3rem 0}
+strong{font-weight:600}
+em{font-style:italic}
+a{color:var(--accent)}
+code{
+  font-family:var(--mono);font-size:.86em;background:var(--surface-2);
+  padding:.1em .34em;border-radius:2px
+}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---------- tables ---------- */
+.scroll{overflow-x:auto;margin:1.3rem 0;border-top:1px solid var(--ink);border-bottom:1px solid var(--rule)}
+table{border-collapse:collapse;width:100%;font-size:.92rem;min-width:34rem}
+th{
+  font-family:var(--mono);font-weight:500;font-size:.66rem;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--muted);text-align:left;
+  padding:.7rem .9rem .7rem 0;border-bottom:1px solid var(--rule);vertical-align:bottom
+}
+td{
+  padding:.72rem .9rem .72rem 0;border-bottom:1px solid var(--rule);
+  vertical-align:top;line-height:1.45
+}
+tr:last-child td{border-bottom:0}
+th:last-child,td:last-child{padding-right:0}
+.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:.85rem;white-space:nowrap}
+.pos{color:var(--ok)}
+.neg{color:var(--danger)}
+td.k{font-family:var(--sans);font-weight:600;font-size:.9rem;white-space:nowrap}
+.tot td{border-top:1px solid var(--ink);font-weight:600}
+
+/* ---------- code ---------- */
+pre{
+  font-family:var(--mono);font-size:.795rem;line-height:1.62;background:var(--surface);
+  border:1px solid var(--rule);border-left:2px solid var(--accent);
+  padding:1rem 1.15rem;overflow-x:auto;margin:1.2rem 0;color:var(--ink-2)
+}
+pre code{background:none;padding:0;font-size:1em}
+pre b{color:var(--ink);font-weight:500}
+pre i{color:var(--muted);font-style:normal}
+
+/* ---------- callout ---------- */
+.note{
+  background:var(--surface);border:1px solid var(--rule);border-left:2px solid var(--accent);
+  padding:1.05rem 1.2rem;margin:1.3rem 0
+}
+.note p{margin:0;max-width:none;font-size:.95rem;line-height:1.55}
+.note p+p{margin-top:.6rem}
+.note h4{margin:0 0 .45rem;color:var(--accent)}
+
+/* ---------- figures ---------- */
+figure{margin:1.8rem 0;color:var(--ink)}
+figure svg{width:100%;height:auto;display:block}
+.figframe{background:var(--surface);border:1px solid var(--rule);padding:1.4rem 1.2rem;overflow-x:auto}
+figcaption{
+  font-size:.86rem;color:var(--muted);margin-top:.75rem;max-width:38rem;line-height:1.5
+}
+.sbox{fill:var(--surface-2);stroke:currentColor;stroke-width:1;opacity:1}
+.sacc{fill:var(--accent-2);stroke:var(--accent);stroke-width:1.25}
+.stitle{font-family:var(--sans);font-size:12.5px;font-weight:600;fill:currentColor}
+.ssub{font-family:var(--mono);font-size:10px;fill:var(--muted)}
+.slab{font-family:var(--mono);font-size:10px;fill:var(--muted)}
+.slab-acc{font-family:var(--mono);font-size:10px;fill:var(--accent)}
+.edge{stroke:currentColor;stroke-width:1.25;fill:none}
+.edge-acc{stroke:var(--accent);stroke-width:1.5;fill:none}
+.edge-dash{stroke:currentColor;stroke-width:1.25;fill:none;stroke-dasharray:4 3;opacity:.65}
+
+/* ---------- phase list ---------- */
+.phases{list-style:none;padding:0;margin:1.4rem 0 0}
+.phases li{
+  max-width:none;display:grid;grid-template-columns:3.4rem minmax(0,1fr);gap:0 1.2rem;
+  padding:1rem 0;border-top:1px solid var(--rule);margin:0
+}
+.phases li:last-child{border-bottom:1px solid var(--rule)}
+.ph{font-family:var(--mono);font-size:.72rem;color:var(--accent);padding-top:.22rem;letter-spacing:.06em}
+.phases h3{margin:0 0 .25rem;font-size:1rem}
+.phases p{margin:0;font-size:.93rem;color:var(--ink-2);max-width:36rem}
+.done{
+  display:block;font-family:var(--mono);font-size:.74rem;color:var(--muted);margin-top:.4rem
+}
+
+/* ---------- do / dont ---------- */
+.dd{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:0 2rem;margin:1.2rem 0}
+.dd > div{border-top:1px solid var(--ink);padding-top:.8rem}
+.dd ul{list-style:none;padding:0;margin:.2rem 0 0}
+.dd li{
+  max-width:none;font-size:.92rem;line-height:1.45;padding:.42rem 0 .42rem 1.1rem;
+  border-bottom:1px solid var(--rule);position:relative
+}
+.dd li::before{position:absolute;left:0;font-family:var(--mono);font-size:.8rem}
+.dd .no li::before{content:"\00d7";color:var(--danger)}
+.dd .si li::before{content:"\2013";color:var(--ok)}
+
+footer{
+  border-top:1px solid var(--ink);margin-top:1rem;padding:2rem 0 4rem;
+  font-family:var(--mono);font-size:.74rem;color:var(--muted);letter-spacing:.02em
+}
+
+@media (max-width:720px){
+  body{font-size:16px}
+  section{grid-template-columns:1fr;gap:0;padding:2.6rem 0}
+  .snum{padding:0 0 .5rem}
+  .masthead{padding:3rem 0 1.75rem}
+  .factbar{gap:0 1.75rem}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">Documento de arquitectura · v1 · 19 ago 2026</p>
+  <h1>Cuentas Claras</h1>
+  <p class="dek">App Android para dos: quién le debe cuánto a quién, y qué factura vence esta semana. Las dos mitades conectadas — al pagar una factura, el gasto entra solo al balance.</p>
+  <dl class="factbar">
+    <div class="fact"><dt>App</dt><dd>Expo · React Native</dd></div>
+    <div class="fact"><dt>API</dt><dd>Next.js en Vercel</dd></div>
+    <div class="fact"><dt>Datos</dt><dd>Neon Postgres · Prisma</dd></div>
+    <div class="fact"><dt>Costo mensual</dt><dd>$0</dd></div>
+    <div class="fact"><dt>Usuarios v1</dt><dd>2</dd></div>
+  </dl>
+</header>
+
+<nav class="toc" aria-label="Contenido">
+  <ol>
+    <li><a href="#s1"><span>01</span>Decisiones cerradas</a></li>
+    <li><a href="#s2"><span>02</span>Cómo encajan las piezas</a></li>
+    <li><a href="#s3"><span>03</span>Dónde vive cada cosa</a></li>
+    <li><a href="#s4"><span>04</span>Estructura del repo</a></li>
+    <li><a href="#s5"><span>05</span>Modelo de datos</a></li>
+    <li><a href="#s6"><span>06</span>La plata: enteros y tasas</a></li>
+    <li><a href="#s7"><span>07</span>Repartos y balances</a></li>
+    <li><a href="#s8"><span>08</span>Facturas y recordatorios</a></li>
+    <li><a href="#s9"><span>09</span>La API</a></li>
+    <li><a href="#s10"><span>10</span>La app por dentro</a></li>
+    <li><a href="#s11"><span>11</span>Lenguaje visual</a></li>
+    <li><a href="#s12"><span>12</span>Trampas conocidas</a></li>
+    <li><a href="#s13"><span>13</span>Plan de construcción</a></li>
+    <li><a href="#s14"><span>14</span>Fuera de la v1</a></li>
+  </ol>
+</nav>
+
+<!-- 01 -->
+<section id="s1">
+  <div class="snum">01</div>
+  <div class="sbody">
+    <h2>Decisiones cerradas</h2>
+    <p>Todo lo que definimos en la conversación, en un solo lugar. Si algo de esto cambia, cambia el documento antes que el código.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Decisión</th><th>Elegido</th><th>Qué implica</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Plataforma</td><td>Expo / React Native</td><td>Push nativo confiable, biometría y widgets disponibles después</td></tr>
+          <tr><td class="k">Sistema</td><td>Solo Android</td><td>Cero costo de Apple; el código queda listo para iOS si algún día se quiere</td></tr>
+          <tr><td class="k">Distribución</td><td>APK directo + EAS Update</td><td>$0. Los cambios de JS llegan por aire sin reinstalar</td></tr>
+          <tr><td class="k">Backend</td><td>Next.js API en Vercel</td><td>Mismo stack que Polla 2026; una sola pieza que desplegar</td></tr>
+          <tr><td class="k">Base de datos</td><td>Neon Postgres + Prisma</td><td>Serverless, remota, tier gratis, migraciones versionadas</td></tr>
+          <tr><td class="k">Login</td><td>Google Sign-In</td><td>Cero contraseñas propias que proteger; JWT propio para la sesión</td></tr>
+          <tr><td class="k">Moneda</td><td>Multi-moneda, base COP</td><td>Tasa del día congelada por gasto, editable a mano</td></tr>
+          <tr><td class="k">Reparto</td><td>Flexible por gasto</td><td>Iguales por defecto; porcentaje, monto exacto o partes cuando haga falta</td></tr>
+          <tr><td class="k">Gastos</td><td>Compartidos y personales</td><td>Un booleano separa lo que entra al balance de lo que solo se registra</td></tr>
+          <tr><td class="k">Facturas</td><td>Estimado + monto real al pagar</td><td>La app aprende el promedio y proyecta el mes</td></tr>
+          <tr><td class="k">Avisos</td><td>Escalonado + resumen del lunes</td><td>−5d, −2d, día 0, luego diario si sigue vencida</td></tr>
+          <tr><td class="k">Extras v1</td><td>Categorías, reporte mensual, saldar deuda</td><td>Foto de recibo y export CSV quedan para v2</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 02 -->
+<section id="s2">
+  <div class="snum">02</div>
+  <div class="sbody">
+    <h2>Cómo encajan las piezas</h2>
+    <p>Cinco servicios, todos en tier gratis. La app nunca habla con la base de datos directamente: todo pasa por la API, que es la única que sabe calcular balances y la única que tiene la credencial de Postgres.</p>
+
+    <figure>
+      <div class="figframe">
+      <svg viewBox="0 0 900 470" role="img" aria-label="Diagrama: la app Expo se autentica con Google, llama a la API de Next.js en Vercel por REST con JWT propio; la API lee y escribe en Neon Postgres, envía notificaciones por el servicio de Expo Push, y un cron diario de Vercel la despierta para calcular recordatorios y traer las tasas de cambio.">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+          <marker id="ara" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/>
+          </marker>
+        </defs>
+
+        <!-- boxes -->
+        <rect class="sbox" x="40" y="30" width="180" height="62"/>
+        <text class="stitle" x="130" y="57" text-anchor="middle">Google Sign-In</text>
+        <text class="ssub" x="130" y="74" text-anchor="middle">cuenta del celular</text>
+
+        <rect class="sbox" x="350" y="30" width="220" height="62"/>
+        <text class="stitle" x="460" y="57" text-anchor="middle">Expo Push Service</text>
+        <text class="ssub" x="460" y="74" text-anchor="middle">gratis, sin FCM propio</text>
+
+        <rect class="sbox" x="40" y="160" width="180" height="124"/>
+        <text class="stitle" x="130" y="205" text-anchor="middle">App Expo</text>
+        <text class="stitle" x="130" y="222" text-anchor="middle">Android</text>
+        <text class="ssub" x="130" y="245" text-anchor="middle">APK sideload</text>
+        <text class="ssub" x="130" y="261" text-anchor="middle">+ EAS Update OTA</text>
+
+        <rect class="sbox" x="350" y="160" width="220" height="124"/>
+        <text class="stitle" x="460" y="200" text-anchor="middle">API Next.js</text>
+        <text class="ssub" x="460" y="220" text-anchor="middle">Vercel · route handlers</text>
+        <text class="ssub" x="460" y="240" text-anchor="middle">balances · splits · auth</text>
+        <text class="ssub" x="460" y="260" text-anchor="middle">única con acceso a la BD</text>
+
+        <rect class="sbox" x="700" y="160" width="170" height="124"/>
+        <text class="stitle" x="785" y="205" text-anchor="middle">Neon Postgres</text>
+        <text class="ssub" x="785" y="228" text-anchor="middle">pooled + Prisma</text>
+        <text class="ssub" x="785" y="246" text-anchor="middle">scale-to-zero</text>
+
+        <rect class="sacc" x="350" y="360" width="220" height="72"/>
+        <text class="stitle" x="460" y="390" text-anchor="middle">Vercel Cron</text>
+        <text class="slab-acc" x="460" y="410" text-anchor="middle">1×/día · 8:00 COT</text>
+
+        <rect class="sbox" x="700" y="365" width="170" height="62"/>
+        <text class="stitle" x="785" y="392" text-anchor="middle">open.er-api.com</text>
+        <text class="ssub" x="785" y="409" text-anchor="middle">tasas, sin API key</text>
+
+        <!-- edges -->
+        <line class="edge" x1="130" y1="160" x2="130" y2="99" marker-end="url(#ar)"/>
+        <text class="slab" x="140" y="132">idToken</text>
+
+        <line class="edge" x1="220" y1="215" x2="343" y2="215" marker-end="url(#ar)"/>
+        <text class="slab" x="281" y="207" text-anchor="middle">REST + JWT propio</text>
+
+        <line class="edge" x1="570" y1="205" x2="693" y2="205" marker-end="url(#ar)"/>
+        <text class="slab" x="631" y="197" text-anchor="middle">Prisma</text>
+
+        <line class="edge" x1="460" y1="160" x2="460" y2="99" marker-end="url(#ar)"/>
+        <text class="slab" x="470" y="132">envía push</text>
+
+        <path class="edge" d="M350 61 L300 61 L300 250 L227 250" marker-end="url(#ar)"/>
+        <text class="slab" x="309" y="120">notificación</text>
+
+        <line class="edge-acc" x1="460" y1="360" x2="460" y2="291" marker-end="url(#ara)"/>
+        <text class="slab-acc" x="470" y="330">GET /api/cron/daily</text>
+
+        <path class="edge-acc" d="M570 250 L631 250 L631 396 L693 396" marker-end="url(#ara)"/>
+        <text class="slab-acc" x="639" y="320">tasas del día</text>
+      </svg>
+      </div>
+      <figcaption>El camino en verde es el que hace funcionar los recordatorios: un solo trabajo diario despierta la API, que trae las tasas, evalúa qué facturas vencen y despacha los push. Todo lo demás son peticiones que nacen de un toque en la app.</figcaption>
+    </figure>
+
+    <h3>Por qué la API existe</h3>
+    <p>Se podría hablar a Postgres directo desde la app (es lo que hace Supabase). No lo hacemos por tres razones concretas: el cálculo de balances y el redondeo de repartos tienen que ser autoritativos en un solo lugar; el cron necesita un endpoint que despertar; y las credenciales de base de datos en un APK que se puede descompilar son credenciales públicas.</p>
+  </div>
+</section>
+
+<!-- 03 -->
+<section id="s3">
+  <div class="snum">03</div>
+  <div class="sbody">
+    <h2>Dónde vive cada cosa</h2>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Servicio</th><th>Para qué</th><th>Plan</th><th class="num">Costo</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Vercel</td><td>API Next.js + cron diario</td><td>Hobby (uso personal)</td><td class="num">$0</td></tr>
+          <tr><td class="k">Neon</td><td>Postgres serverless</td><td>Free · 0.5 GB</td><td class="num">$0</td></tr>
+          <tr><td class="k">Expo EAS</td><td>Compilar el APK y despachar OTA</td><td>Free · cola compartida</td><td class="num">$0</td></tr>
+          <tr><td class="k">Expo Push</td><td>Notificaciones a Android</td><td>Incluido</td><td class="num">$0</td></tr>
+          <tr><td class="k">Google Cloud</td><td>Credenciales OAuth</td><td>Free</td><td class="num">$0</td></tr>
+          <tr><td class="k">open.er-api.com</td><td>Tasas de cambio diarias</td><td>Free, sin key</td><td class="num">$0</td></tr>
+          <tr class="tot"><td class="k">Total</td><td>Todo lo anterior</td><td>—</td><td class="num">$0 / mes</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Los únicos gastos posibles y opcionales: <strong>$25 una vez</strong> si más adelante quieres instalar por Play Store en vez de sideload, y <strong>$19/mes</strong> de Vercel Pro solo si necesitaras crons más frecuentes que uno al día.</p>
+
+    <h3>Por qué no AWS</h3>
+    <p>Lo evalué porque lo pediste. Para dos usuarios es dinero y complejidad sin contrapartida: RDS free tier expira a los doce meses y Aurora Serverless v2 nunca fue gratis, así que a mediano plazo terminarías pagando por una base que está inactiva el 99% del tiempo. Súmale VPC, security groups, IAM y un pipeline de despliegue propio para lograr lo mismo que Vercel hace con un <code>git push</code>.</p>
+    <p>La versión honesta: AWS entra el día que esta app tenga usuarios que no sean tu familia, o un requisito de cumplimiento. Nada del diseño de acá te bloquea para migrar — la API es Node estándar y la base es Postgres puro, así que mudarse a ECS y RDS es reconfigurar variables de entorno, no reescribir.</p>
+  </div>
+</section>
+
+<!-- 04 -->
+<section id="s4">
+  <div class="snum">04</div>
+  <div class="sbody">
+    <h2>Estructura del repo</h2>
+    <p>Repo propio, cuenta personal: <code>github.com/estebanramir/cuentas-claras</code>, clonado en <code>~/Documents/Repos/cuentas-claras</code>. Nada de esto toca sytrex.</p>
+    <p>Monorepo con pnpm. La razón es <code>packages/shared</code>: la matemática de repartos y balances se usa en dos lados — la API la ejecuta como verdad, y la app la ejecuta para pintar el resultado antes de que responda el servidor. Escribirla dos veces es garantizar que se desincronicen.</p>
+<pre><code>cuentas-claras/
+├─ apps/
+│  ├─ mobile/            <i># Expo + Expo Router</i>
+│  │  ├─ app/            <i># pantallas por archivo</i>
+│  │  ├─ components/
+│  │  └─ lib/api.ts      <i># cliente tipado + refresh de token</i>
+│  └─ api/               <i># Next.js, solo app/api/**</i>
+│     └─ app/api/...
+├─ packages/
+│  ├─ shared/            <i># zod + dinero + splits + balances</i>
+│  │  ├─ money.ts        <i># enteros en unidades mínimas</i>
+│  │  ├─ split.ts        <i># reparto con resto mayor</i>
+│  │  ├─ balance.ts      <i># neteo y simplificación</i>
+│  │  └─ schemas.ts      <i># contratos de entrada/salida</i>
+│  └─ db/                <i># prisma/schema.prisma + migraciones</i>
+└─ pnpm-workspace.yaml</code></pre>
+    <div class="note">
+      <h4>Detalle de Metro</h4>
+      <p>Expo dentro de un monorepo necesita <code>metro.config.js</code> con <code>watchFolders</code> apuntando a la raíz y <code>nodeModulesPaths</code> incluyendo el <code>node_modules</code> de arriba. Está documentado y son diez líneas, pero si se omite el bundler simplemente no encuentra <code>@cuentas/shared</code> y el error no dice por qué.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 -->
+<section id="s5">
+  <div class="snum">05</div>
+  <div class="sbody">
+    <h2>Modelo de datos</h2>
+    <p>Once tablas. Las dos decisiones que cargan más peso son <code>Member</code> separado de <code>User</code> — que es lo que permite meter a alguien sin cuenta en un grupo — y <code>BillInstance</code> materializada, que convierte "¿qué vence este mes?" en un <code>SELECT</code> en vez de un cálculo de recurrencias en tiempo real.</p>
+
+<pre><code><b>User</b>          id · googleSub · email · name · avatarUrl · baseCurrency='COP'
+<b>Device</b>        id · userId → User · expoPushToken · lastSeenAt
+                <i>un usuario puede tener varios celulares</i>
+
+<b>Group</b>         id · name · defaultCurrency · createdById · archivedAt
+<b>Member</b>        id · groupId → Group · <b>userId → User (nullable)</b> · displayName · role
+                <i>userId null = persona sin cuenta en la app</i>
+
+<b>Category</b>      id · groupId (null = global) · name · icon · color
+
+<b>Expense</b>       id · groupId · categoryId · description · date
+                amountMinor (BigInt) · currency · fxRate · <b>amountBaseMinor</b>
+                paidByMemberId → Member
+                <b>isShared</b> (bool) · splitMethod (EQUAL|PERCENT|EXACT|SHARES)
+                billInstanceId (nullable) · createdById · deletedAt
+<b>ExpenseShare</b>  id · expenseId · memberId · weight · <b>amountBaseMinor</b>
+                <i>unique(expenseId, memberId)</i>
+
+<b>Settlement</b>    id · groupId · fromMemberId · toMemberId · date · note
+                amountMinor · currency · fxRate · amountBaseMinor
+
+<b>Bill</b>          id · groupId · name · categoryId · payerMemberId
+                estimatedAmountMinor · currency
+                recurrence (MONTHLY|BIMONTHLY|QUARTERLY|YEARLY|CUSTOM)
+                dueDayOfMonth | intervalDays · anchorDate
+                reminderDaysBefore int[] default [5,2,0]
+                splitMethod + BillShare[] <i>(reparto por defecto)</i>
+                isActive
+<b>BillInstance</b>  id · billId · <b>dueDate (DATE)</b> · expectedAmountMinor
+                status (PENDING|PAID|SKIPPED) · paidAt
+                paidAmountMinor · paidCurrency · expenseId
+                <i>unique(billId, dueDate)</i>
+
+<b>FxRate</b>        date · currency · copPerUnit   <i>unique(date, currency)</i>
+<b>NotifyLog</b>     id · userId · kind · billInstanceId · sentOn (DATE) · payload
+                <i>unique(userId, kind, billInstanceId, sentOn) → idempotencia</i></code></pre>
+
+    <h3>Dos detalles que evitan dolores después</h3>
+    <p><strong>Borrado lógico en <code>Expense</code>.</strong> <code>deletedAt</code> en vez de <code>DELETE</code>. Si un gasto de hace tres meses desaparece de verdad, los balances históricos y los reportes ya emitidos dejan de cuadrar sin explicación.</p>
+    <p><strong><code>dueDate</code> es <code>DATE</code>, no <code>TIMESTAMP</code>.</strong> El vencimiento de la luz es "el 15", no "el 15 a las 00:00 en algún huso". Con timestamp, un servidor en UTC te va a mostrar el 14 en Bogotá tarde o temprano. Toda la app opera en <code>America/Bogotá</code>, que además no tiene horario de verano.</p>
+  </div>
+</section>
+
+<!-- 06 -->
+<section id="s6">
+  <div class="snum">06</div>
+  <div class="sbody">
+    <h2>La plata: enteros y tasas congeladas</h2>
+
+    <h4>Regla uno</h4>
+    <p>Nada de <code>float</code>. Todo monto se guarda como entero en la unidad mínima de su moneda: COP tiene exponente 0, así que $150.000 se guarda como <code>150000</code>; USD tiene exponente 2, así que 12,99 se guarda como <code>1299</code>. La conversión a texto ocurre solo al pintar.</p>
+
+    <h4>Regla dos</h4>
+    <p>Cada gasto congela su tasa. El cron diario guarda <code>copPerUnit</code> por moneda en <code>FxRate</code>; al crear un gasto en USD, se copia la tasa de esa fecha al campo <code>fxRate</code> del gasto y se calcula <code>amountBaseMinor</code> de una vez. Si mañana el dólar sube, tu balance de marzo no se mueve — que es justo lo que uno espera de una deuda.</p>
+    <p>Cuando la tasa real fue otra (la que te aplicó la tarjeta, por ejemplo), editas <code>fxRate</code> en ese gasto y solo ese gasto se recalcula.</p>
+
+    <h4>De dónde salen las tasas</h4>
+    <p>Una llamada a <code>open.er-api.com/v6/latest/USD</code> por día. La respuesta trae <code>rates.COP</code> y <code>rates.EUR</code>; los pesos por euro salen de dividir uno entre otro. Si la llamada falla, se reusa la última tasa guardada y se registra el hueco — nunca se bloquea el registro de un gasto por una API externa.</p>
+
+    <h4>Ejemplo completo</h4>
+    <p>Netflix, 12,99 USD, 3 de marzo, tasa 3.950 COP/USD, dividido en partes iguales:</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Campo</th><th>Valor guardado</th><th>Cómo sale</th></tr></thead>
+        <tbody>
+          <tr><td class="k">amountMinor</td><td class="num">1299</td><td>12,99 USD en centavos</td></tr>
+          <tr><td class="k">currency</td><td class="num">USD</td><td>exponente 2</td></tr>
+          <tr><td class="k">fxRate</td><td class="num">3950.00000000</td><td>de FxRate del 3-mar</td></tr>
+          <tr><td class="k">amountBaseMinor</td><td class="num">51 311</td><td>12,99 × 3.950 = 51.310,5 → medio arriba</td></tr>
+          <tr><td class="k">share · Esteban</td><td class="num">25 656</td><td rowspan="2">51.311 es impar: el peso sobrante se asigna por resto mayor y rota entre miembros según el id del gasto, para que a la larga quede parejo</td></tr>
+          <tr><td class="k">share · Ana</td><td class="num">25 655</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 07 -->
+<section id="s7">
+  <div class="snum">07</div>
+  <div class="sbody">
+    <h2>Repartos y balances</h2>
+
+    <h3>El reparto</h3>
+    <p>Cuatro métodos, un solo algoritmo. <code>EQUAL</code> asigna peso 1 a cada participante, <code>SHARES</code> asigna las partes que digas, <code>PERCENT</code> los porcentajes, y <code>EXACT</code> los montos directos. Luego:</p>
+    <ol>
+      <li>Ideal de cada uno = <code>monto × peso / Σpesos</code>.</li>
+      <li>Se toma el piso entero de cada ideal.</li>
+      <li>Las unidades sobrantes se reparten de mayor a menor parte fraccionaria; los empates se rompen rotando por el id del gasto.</li>
+      <li>Se verifica que <code>Σ shares = monto</code>. Si no, es un bug y revienta en tests, no en producción.</li>
+    </ol>
+    <p><code>EXACT</code> no reparte nada: valida que la suma cuadre y rechaza el gasto si no.</p>
+
+    <h3>El balance</h3>
+    <p>Para cada miembro del grupo, sumando solo gastos con <code>isShared = true</code>:</p>
+<pre><code>balance(m) = Σ gastos pagados por m
+           − Σ partes que le tocaron a m
+           + Σ pagos que m le hizo a otros
+           − Σ pagos que m recibió</code></pre>
+    <p>Positivo significa que le deben; negativo, que debe. La suma de todos los balances de un grupo es siempre exactamente cero — esa es la invariante que vale la pena tener como test de propiedad, porque si alguna vez falla es que el redondeo se rompió.</p>
+
+    <h4>Tu ejemplo, tal cual</h4>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Miembro</th><th class="num">Pagó</th><th class="num">Le tocaba</th><th class="num">Balance</th><th>Estado</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Esteban</td><td class="num">50.000</td><td class="num">75.000</td><td class="num neg">−25.000</td><td>debe</td></tr>
+          <tr><td class="k">Ana</td><td class="num">100.000</td><td class="num">75.000</td><td class="num pos">+25.000</td><td>le deben</td></tr>
+          <tr class="tot"><td class="k">Σ</td><td class="num">150.000</td><td class="num">150.000</td><td class="num">0</td><td>cuadra</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>La app no muestra la tabla: muestra <em>Le debes $25.000 a Ana</em> y un botón para saldar.</p>
+
+    <h3>Simplificar deudas</h3>
+    <p>Con dos personas hay una sola transferencia posible y esto es trivial. Se implementa igual para N con el algoritmo voraz de flujo mínimo — se empareja repetidamente al mayor acreedor con el mayor deudor — que garantiza a lo sumo N−1 transferencias. Así el día que entre un tercero al grupo, no hay que tocar nada.</p>
+    <p>Saldar genera un <code>Settlement</code>, no borra gastos. El histórico queda intacto y el balance vuelve a cero por suma, no por olvido.</p>
+  </div>
+</section>
+
+<!-- 08 -->
+<section id="s8">
+  <div class="snum">08</div>
+  <div class="sbody">
+    <h2>Facturas y recordatorios</h2>
+    <p>Esta es la parte que une las dos mitades de la app. Una <code>Bill</code> es la plantilla — "Luz, mensual, día 15, estimado $180.000, 50/50". Una <code>BillInstance</code> es una ocurrencia concreta con fecha y estado. El cron materializa instancias con 60 días de anticipación, así que siempre hay algo sobre lo cual avisar y algo que mostrar en "próximas".</p>
+
+    <figure>
+      <div class="figframe">
+      <svg viewBox="0 0 910 420" role="img" aria-label="Diagrama del ciclo de vida de una factura: la plantilla genera instancias por adelantado, el cron diario dispara recordatorios escalonados, el usuario marca pagada con el monto real, eso genera un gasto compartido que recalcula los balances, y el monto real actualiza el estimado de la siguiente instancia.">
+        <defs>
+          <marker id="br" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+          <marker id="bra" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/>
+          </marker>
+        </defs>
+
+        <rect class="sbox" x="20" y="60" width="200" height="80"/>
+        <text class="stitle" x="120" y="88" text-anchor="middle">Bill · plantilla</text>
+        <text class="ssub" x="120" y="108" text-anchor="middle">Luz · mensual · día 15</text>
+        <text class="ssub" x="120" y="125" text-anchor="middle">estimado $180.000</text>
+
+        <rect class="sbox" x="360" y="60" width="200" height="80"/>
+        <text class="stitle" x="460" y="88" text-anchor="middle">BillInstance</text>
+        <text class="ssub" x="460" y="108" text-anchor="middle">vence 15-mar</text>
+        <text class="ssub" x="460" y="125" text-anchor="middle">PENDIENTE</text>
+
+        <rect class="sbox" x="700" y="60" width="190" height="80"/>
+        <text class="stitle" x="795" y="88" text-anchor="middle">Pago registrado</text>
+        <text class="ssub" x="795" y="108" text-anchor="middle">real $194.300</text>
+        <text class="ssub" x="795" y="125" text-anchor="middle">status PAID</text>
+
+        <rect class="sacc" x="360" y="210" width="200" height="80"/>
+        <text class="stitle" x="460" y="238" text-anchor="middle">Recordatorios</text>
+        <text class="slab-acc" x="460" y="258" text-anchor="middle">−5d · −2d · día 0</text>
+        <text class="slab-acc" x="460" y="275" text-anchor="middle">luego diario si vence</text>
+
+        <rect class="sbox" x="700" y="210" width="190" height="80"/>
+        <text class="stitle" x="795" y="238" text-anchor="middle">Expense compartido</text>
+        <text class="ssub" x="795" y="258" text-anchor="middle">pagador + reparto</text>
+        <text class="ssub" x="795" y="275" text-anchor="middle">heredados de Bill</text>
+
+        <rect class="sbox" x="700" y="335" width="190" height="55"/>
+        <text class="stitle" x="795" y="360" text-anchor="middle">Balances del grupo</text>
+        <text class="ssub" x="795" y="378" text-anchor="middle">se recalculan</text>
+
+        <!-- flow -->
+        <line class="edge-acc" x1="220" y1="100" x2="353" y2="100" marker-end="url(#bra)"/>
+        <text class="slab-acc" x="286" y="82" text-anchor="middle">cron materializa</text>
+        <text class="slab-acc" x="286" y="95" text-anchor="middle">60 días adelante</text>
+
+        <line class="edge" x1="560" y1="100" x2="693" y2="100" marker-end="url(#br)"/>
+        <text class="slab" x="626" y="82" text-anchor="middle">marcar pagada</text>
+        <text class="slab" x="626" y="95" text-anchor="middle">+ monto real</text>
+
+        <line class="edge-acc" x1="460" y1="140" x2="460" y2="203" marker-end="url(#bra)"/>
+        <text class="slab-acc" x="470" y="176">cron diario evalúa</text>
+
+        <line class="edge" x1="795" y1="140" x2="795" y2="203" marker-end="url(#br)"/>
+        <text class="slab" x="805" y="176">genera</text>
+
+        <line class="edge" x1="795" y1="290" x2="795" y2="328" marker-end="url(#br)"/>
+        <text class="slab" x="805" y="313">alimenta</text>
+
+        <path class="edge-dash" d="M560 250 L640 250 L640 125 L693 125" marker-end="url(#br)"/>
+        <text class="slab" x="648" y="196">el aviso lleva al pago</text>
+
+        <path class="edge" d="M795 60 L795 28 L120 28 L120 53" marker-end="url(#br)"/>
+        <text class="slab" x="457" y="20" text-anchor="middle">el monto real recalcula el estimado de la próxima instancia</text>
+      </svg>
+      </div>
+      <figcaption>La factura no es un recordatorio suelto: al pagarla se convierte en un gasto real del grupo, con el mismo pagador y el mismo reparto que la plantilla, y el monto que escribiste alimenta el estimado del mes siguiente.</figcaption>
+    </figure>
+
+    <h3>Qué hace el trabajo diario</h3>
+    <p>Un solo endpoint, <code>GET /api/cron/daily</code>, protegido por <code>CRON_SECRET</code>, corriendo a las 8:00 de Bogotá. En orden:</p>
+    <ol>
+      <li>Trae las tasas del día y las guarda.</li>
+      <li>Materializa instancias faltantes dentro del horizonte de 60 días.</li>
+      <li>Marca como vencidas las <code>PENDING</code> con <code>dueDate &lt; hoy</code>.</li>
+      <li>Para cada instancia pendiente calcula los días que faltan y, si caen en <code>reminderDaysBefore</code>, en el día cero, o ya está vencida, despacha el push.</li>
+      <li>Si es lunes, arma el resumen semanal por usuario: lo que vence en siete días más el balance actual.</li>
+      <li>Escribe en <code>NotifyLog</code> antes de enviar.</li>
+    </ol>
+    <div class="note">
+      <h4>Idempotencia</h4>
+      <p>El índice único <code>(userId, kind, billInstanceId, sentOn)</code> es lo que impide que un reintento del cron, o un despliegue a mitad de ejecución, te mande el mismo aviso dos veces. Se escribe el log primero y se envía después: es preferible perder un aviso que duplicarlo — el del día siguiente lo cubre igual.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 09 -->
+<section id="s9">
+  <div class="snum">09</div>
+  <div class="sbody">
+    <h2>La API</h2>
+    <p>Route handlers de Next.js, entrada y salida validadas con los esquemas zod de <code>packages/shared</code>. Todo endpoint que toca un grupo verifica primero que el usuario del JWT sea miembro.</p>
+<pre><code><b>POST</b>   /api/auth/google        <i>idToken de Google → { access, refresh }</i>
+<b>POST</b>   /api/auth/refresh       <i>rotación de refresh token</i>
+<b>POST</b>   /api/devices            <i>registra el expoPushToken del celular</i>
+
+<b>GET</b>    /api/groups
+<b>POST</b>   /api/groups
+<b>POST</b>   /api/groups/:id/members <i>userId o solo displayName</i>
+<b>GET</b>    /api/groups/:id/balances
+       <i>→ netos por miembro + transferencias sugeridas</i>
+
+<b>GET</b>    /api/expenses?groupId&from&to&categoryId&shared
+<b>POST</b>   /api/expenses
+<b>PATCH</b>  /api/expenses/:id
+<b>DELETE</b> /api/expenses/:id       <i>soft delete</i>
+
+<b>POST</b>   /api/settlements        <i>saldar</i>
+
+<b>GET</b>    /api/bills?groupId
+<b>POST</b>   /api/bills
+<b>PATCH</b>  /api/bills/:id
+<b>GET</b>    /api/bill-instances?from&to&status
+<b>POST</b>   /api/bill-instances/:id/pay
+       <i>{ paidAmount, currency, date } → crea el Expense</i>
+<b>POST</b>   /api/bill-instances/:id/skip
+
+<b>GET</b>    /api/reports/monthly?groupId&month
+       <i>→ por categoría, compartido vs personal, vs mes anterior</i>
+
+<b>GET</b>    /api/cron/daily         <i>Bearer CRON_SECRET</i></code></pre>
+
+    <h3>Sesión</h3>
+    <p>La app pide el <code>idToken</code> a Google de forma nativa, lo manda una vez a <code>/api/auth/google</code>, y la API lo verifica contra las llaves públicas de Google validando el <code>aud</code> contra tu client id web. A partir de ahí la sesión es tuya: un access token de quince minutos y un refresh rotativo guardado en <code>expo-secure-store</code>, que en Android va al keystore del sistema y no al almacenamiento común.</p>
+  </div>
+</section>
+
+<!-- 10 -->
+<section id="s10">
+  <div class="snum">10</div>
+  <div class="sbody">
+    <h2>La app por dentro</h2>
+    <p>Expo Router — cada archivo es una ruta. Cuatro pestañas, porque cinco ya obliga a apretar los íconos y esta app no tiene cinco cosas importantes que hacer.</p>
+<pre><code>app/
+├─ (auth)/sign-in.tsx
+└─ (tabs)/
+   ├─ index.tsx          <i>Inicio — balance grande + lo que vence</i>
+   ├─ gastos/
+   │  ├─ index.tsx       <i>lista tipo extracto, agrupada por día</i>
+   │  ├─ nuevo.tsx       <i>monto → quién pagó → reparto → guardar</i>
+   │  └─ [id].tsx
+   ├─ facturas/
+   │  ├─ index.tsx       <i>próximas arriba, pagadas abajo</i>
+   │  ├─ nueva.tsx
+   │  └─ [id]/pagar.tsx
+   └─ reportes.tsx       <i>mes actual por categoría vs anterior</i></code></pre>
+    <h4>Piezas</h4>
+    <ul>
+      <li><strong>TanStack Query</strong> para todo lo remoto: caché, reintentos y mutaciones optimistas sin escribir un reducer.</li>
+      <li><strong>react-hook-form + zod</strong>, con los mismos esquemas que valida la API.</li>
+      <li><strong>expo-secure-store</strong> para los tokens, <strong>expo-notifications</strong> para el push.</li>
+      <li><strong>Sin librería de estado global.</strong> Lo único verdaderamente global es la sesión, y eso es un contexto de veinte líneas.</li>
+    </ul>
+    <h4>La pantalla que importa</h4>
+    <p>Inicio responde dos preguntas sin que toques nada: cuánto debes o te deben ahora mismo, y qué se vence antes del domingo. Todo lo demás está a un toque de distancia. Si abrir la app y entender tu situación toma más de dos segundos, el diseño falló.</p>
+  </div>
+</section>
+
+<!-- 11 -->
+<section id="s11">
+  <div class="snum">11</div>
+  <div class="sbody">
+    <h2>Lenguaje visual</h2>
+    <p>Pediste sobrio y que no huela a generado. Eso se decide en detalles concretos, no en adjetivos, así que acá van como reglas verificables. La referencia mental no es una app de fintech con degradados: es un extracto bancario bien tipografiado.</p>
+
+    <div class="dd">
+      <div>
+        <h4>Nunca</h4>
+        <ul class="no">
+          <li>Degradados morado–azul, ni ningún degradado de marca</li>
+          <li>Glassmorphism, blur de fondo, sombras difusas grandes</li>
+          <li>Emojis como íconos de categoría</li>
+          <li>Esquinas de 24px en absolutamente todo</li>
+          <li>Tarjetas flotantes para cada fila de una lista</li>
+          <li>Animaciones con rebote o resortes exagerados</li>
+          <li>Ilustraciones genéricas en los estados vacíos</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Siempre</h4>
+        <ul class="si">
+          <li>Separadores de 1px en vez de sombras</li>
+          <li>Cifras alineadas a la derecha, con numerales tabulares</li>
+          <li>Color solo con significado: verde te deben, rojo debes</li>
+          <li>Un único set de íconos de línea, mismo grosor</li>
+          <li>Radios de 4 a 8px, y solo donde hay que tocar</li>
+          <li>Movimiento de 180–220ms con la curva estándar de Material</li>
+          <li>Estados vacíos que son una frase y un botón</li>
+        </ul>
+      </div>
+    </div>
+
+    <h4>Tokens de la app</h4>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Token</th><th>Claro</th><th>Oscuro</th><th>Uso</th></tr></thead>
+        <tbody>
+          <tr><td class="k">fondo</td><td class="num">#F6F7F5</td><td class="num">#101412</td><td>lienzo de la pantalla</td></tr>
+          <tr><td class="k">superficie</td><td class="num">#FFFFFF</td><td class="num">#171D1A</td><td>filas, hojas, campos</td></tr>
+          <tr><td class="k">tinta</td><td class="num">#151C19</td><td class="num">#E7EDE9</td><td>cifras y títulos</td></tr>
+          <tr><td class="k">tinta·2</td><td class="num">#3E4A45</td><td class="num">#B6C2BC</td><td>descripciones</td></tr>
+          <tr><td class="k">apagado</td><td class="num">#6B7873</td><td class="num">#8B9A93</td><td>fechas, etiquetas</td></tr>
+          <tr><td class="k">línea</td><td class="num">#DCE2DE</td><td class="num">#2A332E</td><td>separadores</td></tr>
+          <tr><td class="k">acento</td><td class="num">#1E5C4C</td><td class="num">#78C4A8</td><td>acción principal, solo una por pantalla</td></tr>
+          <tr><td class="k">te deben</td><td class="num">#2C6A46</td><td class="num">#7CC49A</td><td>balance a favor</td></tr>
+          <tr><td class="k">debes</td><td class="num">#8E3A33</td><td class="num">#D98C84</td><td>balance en contra, vencidas</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Tipografía: <strong>Roboto</strong>, la del sistema Android, que hace que la app se sienta parte del teléfono en vez de una web disfrazada. Las cifras siempre con <code>fontVariant: ['tabular-nums']</code> para que las columnas no bailen al actualizarse. El peso hace la jerarquía; el tamaño solo cuando hace falta de verdad.</p>
+  </div>
+</section>
+
+<!-- 12 -->
+<section id="s12">
+  <div class="snum">12</div>
+  <div class="sbody">
+    <h2>Trampas conocidas</h2>
+    <p>Cosas que van a costar tiempo si nos toman por sorpresa, y que valen media hora ahora.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Trampa</th><th>Cómo se manifiesta</th><th>Qué hacemos</th></tr></thead>
+        <tbody>
+          <tr><td class="k">SHA-1 de la keystore</td><td>Google Sign-In falla con <code>DEVELOPER_ERROR</code> y nada más</td><td>Registrar la huella SHA-1 de la keystore que administra EAS en el cliente OAuth Android, y usar el client id <em>web</em> para pedir el idToken</td></tr>
+          <tr><td class="k">Cron de Vercel Hobby</td><td>Máximo uno al día, y la hora es aproximada</td><td>Un único trabajo que hace todo; ningún aviso depende de la hora exacta</td></tr>
+          <tr><td class="k">Neon scale-to-zero</td><td>La primera petición tras horas de inactividad tarda cerca de un segundo</td><td>Skeletons en vez de spinners; el cron diario ya la despierta cada mañana</td></tr>
+          <tr><td class="k">BigInt en JSON</td><td><code>TypeError</code> al serializar la respuesta</td><td>Los montos viajan como string en el borde de la API; se convierten al entrar y al salir</td></tr>
+          <tr><td class="k">EAS Update</td><td>Un cambio no aparece por más OTA que se despache</td><td>OTA solo mueve JS. Dependencia nativa nueva = APK nuevo, y hay que decirlo en las notas</td></tr>
+          <tr><td class="k">Play Protect</td><td>Advertencia intimidante al instalar el APK</td><td>Avisarlo de antemano; si molesta, los $25 de Play internal testing lo eliminan</td></tr>
+          <tr><td class="k">Zona horaria</td><td>Una factura del 15 se muestra como del 14</td><td><code>DATE</code> puro para vencimientos y <code>America/Bogotá</code> fijo en el servidor</td></tr>
+          <tr><td class="k">Redondeo</td><td>Los balances no suman cero</td><td>Test de propiedad sobre repartos aleatorios: la suma de partes es igual al total, siempre</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 13 -->
+<section id="s13">
+  <div class="snum">13</div>
+  <div class="sbody">
+    <h2>Plan de construcción</h2>
+    <p>Siete fases. Cada una termina en algo instalado y usable en tu celular, no en una rama a medias. El orden está pensado para que la app sea útil desde la fase 2, aunque le falten features.</p>
+    <ol class="phases">
+      <li>
+        <div class="ph">F0</div>
+        <div>
+          <h3>Cimientos</h3>
+          <p>Repo, monorepo pnpm, Prisma contra Neon, API desplegada en Vercel, build de desarrollo de Expo instalado en los dos celulares.</p>
+          <span class="done">Listo cuando: la app abre y muestra la respuesta de un endpoint real.</span>
+        </div>
+      </li>
+      <li>
+        <div class="ph">F1</div>
+        <div>
+          <h3>Sesión y grupo</h3>
+          <p>Google Sign-In de punta a punta, JWT propio con refresh, creación del grupo y de los dos miembros.</p>
+          <span class="done">Listo cuando: los dos entran con su cuenta y se ven en el mismo grupo.</span>
+        </div>
+      </li>
+      <li>
+        <div class="ph">F2</div>
+        <div>
+          <h3>Gastos y balances</h3>
+          <p>El corazón. Registrar gasto, los cuatro métodos de reparto, compartido contra personal, cálculo de balance y saldar deuda. Multi-moneda ya en el esquema, con COP fijo en la interfaz.</p>
+          <span class="done">Listo cuando: reemplaza a la nota del celular donde llevan las cuentas hoy.</span>
+        </div>
+      </li>
+      <li>
+        <div class="ph">F3</div>
+        <div>
+          <h3>Facturas</h3>
+          <p>Plantillas, materialización de instancias, pantalla de próximas, y el pago que genera el gasto y hereda el reparto.</p>
+          <span class="done">Listo cuando: pagar la luz en la app mueve el balance sin escribir nada dos veces.</span>
+        </div>
+      </li>
+      <li>
+        <div class="ph">F4</div>
+        <div>
+          <h3>Avisos</h3>
+          <p>Registro de dispositivos, cron diario, escalera de recordatorios con su log de idempotencia, y el resumen de los lunes.</p>
+          <span class="done">Listo cuando: llega el push correcto un día que nadie abrió la app.</span>
+        </div>
+      </li>
+      <li>
+        <div class="ph">F5</div>
+        <div>
+          <h3>Categorías y reporte</h3>
+          <p>Categorías por grupo y la pantalla mensual: en qué se fue la plata, compartido contra personal, contra el mes pasado.</p>
+          <span class="done">Listo cuando: el reporte les hace cambiar una decisión de gasto.</span>
+        </div>
+      </li>
+      <li>
+        <div class="ph">F6</div>
+        <div>
+          <h3>Multi-moneda visible</h3>
+          <p>Selector de moneda en el formulario, sincronización de tasas, edición manual de la tasa por gasto.</p>
+          <span class="done">Listo cuando: una suscripción en dólares queda bien repartida en pesos.</span>
+        </div>
+      </li>
+      <li>
+        <div class="ph">F7</div>
+        <div>
+          <h3>Pulido y APK final</h3>
+          <p>Pasada completa de diseño contra la sección 11, tema oscuro, estados vacíos y de error, build de producción firmado.</p>
+          <span class="done">Listo cuando: se usa a diario sin que nadie diga "es que le falta".</span>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- 14 -->
+<section id="s14">
+  <div class="snum">14</div>
+  <div class="sbody">
+    <h2>Fuera de la v1</h2>
+    <p>Decidido, no olvidado. Cada uno tiene su lugar reservado en el modelo de datos para que agregarlo después no sea una migración dolorosa.</p>
+    <ul>
+      <li><strong>Foto del recibo</strong> — necesita almacenamiento de archivos; Vercel Blob o Cloudflare R2, ambos con tier gratis. El campo <code>attachmentUrl</code> ya cabe en <code>Expense</code>.</li>
+      <li><strong>Export a CSV</strong> — un endpoint y un <code>Share</code> nativo. Media tarde cuando se necesite.</li>
+      <li><strong>Offline real</strong> — persistir la caché de TanStack Query y encolar mutaciones. Vale la pena el día que registres un gasto en un sótano sin señal.</li>
+      <li><strong>Presupuestos por categoría</strong> — depende de tener meses de datos reales para que el número signifique algo.</li>
+      <li><strong>Reparto por ítem</strong> — desglosar la cuenta del restaurante línea por línea. El modelo lo soporta con una tabla hija; la interfaz es el trabajo.</li>
+      <li><strong>iOS y web</strong> — el código es casi todo compartible. Es una decisión de $99 al año, no de arquitectura.</li>
+    </ul>
+    <div class="note">
+      <h4>Lo que falta decidir antes de F0</h4>
+      <p>Solo dos cosas: el nombre definitivo — <em>Cuentas Claras</em> es el nombre de trabajo — y confirmar que el repo va en <code>~/Documents/Repos/cuentas-claras</code> bajo tu GitHub personal. Todo lo demás está resuelto.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Cuentas Claras · documento de arquitectura · 19 ago 2026 · próxima revisión al cerrar F2
+</footer>
+
+</div>

@@ -1,0 +1,14 @@
+{
+  "name": "cuentas-claras",
+  "private": true,
+  "packageManager": "pnpm@10.33.0",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "test": "pnpm -r --filter @cuentas/shared test",
+    "api": "pnpm --filter @cuentas/api dev",
+    "mobile": "pnpm --filter @cuentas/mobile start",
+    "db:push": "pnpm --filter @cuentas/db push",
+    "db:migrate": "pnpm --filter @cuentas/db migrate",
+    "db:studio": "pnpm --filter @cuentas/db studio"
+  }
+}
