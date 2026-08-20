@@ -1,0 +1,21 @@
+# Postgres local solo para desarrollo. En produccion la base es Neon.
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: cuentas-postgres
+    environment:
+      POSTGRES_USER: cuentas
+      POSTGRES_PASSWORD: cuentas
+      POSTGRES_DB: cuentas
+    ports:
+      - "5455:5432"
+    volumes:
+      - cuentas-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cuentas"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  cuentas-pgdata:

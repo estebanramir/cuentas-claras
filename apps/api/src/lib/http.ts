@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { ZodError } from 'zod';
+import { BalanceError, BillError, SplitError } from '@cuentas/shared';
 
 /**
  * BigInt no es serializable a JSON y un Number pierde precision con montos
@@ -46,6 +47,18 @@ export function handler<T extends unknown[]>(
     } catch (error) {
       if (error instanceof ApiError) {
         return json({ error: error.message, details: error.details }, { status: error.status });
+      }
+      // Los errores del nucleo de calculo son culpa de los datos que llegaron
+      // (porcentajes que no suman 100, montos exactos que no cuadran), no de
+      // una falla del servidor. Su mensaje ya esta escrito para mostrarse.
+      if (error instanceof SplitError || error instanceof BillError) {
+        return json({ error: error.message }, { status: 400 });
+      }
+      // Un BalanceError significa que los datos guardados quedaron inconsistentes:
+      // eso si es un problema nuestro y tiene que verse en los logs.
+      if (error instanceof BalanceError) {
+        console.error('[api] balances inconsistentes', error);
+        return json({ error: error.message }, { status: 500 });
       }
       if (error instanceof ZodError) {
         const first = error.errors[0];
