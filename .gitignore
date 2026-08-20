@@ -10,3 +10,4 @@ dist/
 coverage/
 android/
 ios/
+node_modules.obsoleto/

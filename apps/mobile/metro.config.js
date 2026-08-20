@@ -1,5 +1,6 @@
-// Metro en un monorepo: sin esto, el bundler no encuentra @cuentas/shared,
-// y el error que da no dice por que.
+// Configuracion de monorepo tal como la documenta Expo: se vigila la raiz del
+// workspace y se busca en los dos node_modules. Nada mas, porque el resto de
+// la resolucion la resuelve el enlazado plano de pnpm (ver .npmrc).
 const { getDefaultConfig } = require('expo/metro-config');
 const path = require('node:path');
 
@@ -13,9 +14,5 @@ config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, 'node_modules'),
   path.resolve(workspaceRoot, 'node_modules'),
 ];
-// pnpm usa enlaces simbolicos; sin esto Metro resuelve la misma dependencia
-// dos veces y React se duplica.
-config.resolver.disableHierarchicalLookup = true;
-config.resolver.unstable_enableSymlinks = true;
 
 module.exports = config;

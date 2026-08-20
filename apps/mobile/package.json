@@ -11,16 +11,16 @@
   },
   "dependencies": {
     "@cuentas/shared": "workspace:*",
-    "@expo/metro-runtime": "~57.0.11",
+    "@expo/metro-runtime": "~57.0.12",
     "@expo/vector-icons": "^15.1.1",
     "@react-native-google-signin/google-signin": "^16.1.4",
     "@tanstack/react-query": "^5.101.4",
-    "expo": "^57.0.14",
-    "expo-constants": "~57.0.12",
+    "expo": "^57.0.15",
+    "expo-constants": "~57.0.13",
     "expo-device": "~57.0.1",
-    "expo-linking": "~57.0.6",
-    "expo-notifications": "~57.0.12",
-    "expo-router": "~57.0.14",
+    "expo-linking": "~57.0.7",
+    "expo-notifications": "~57.0.13",
+    "expo-router": "~57.0.15",
     "expo-secure-store": "~57.0.1",
     "expo-splash-screen": "~57.0.7",
     "expo-status-bar": "~57.0.1",
@@ -36,6 +36,6 @@
   },
   "devDependencies": {
     "@types/react": "^19.2.18",
-    "typescript": "^5.9.3"
+    "typescript": "~6.0.3"
   }
 }
