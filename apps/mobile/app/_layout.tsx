@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider, useAuth } from '../src/auth';
+import { CasaProvider } from '../src/casa';
 import { useEsOscuro, usePaleta } from '../src/theme';
 
 void SplashScreen.preventAutoHideAsync();
@@ -53,6 +54,7 @@ export default function Layout() {
       <SafeAreaProvider>
         <QueryClientProvider client={cliente}>
           <AuthProvider>
+            <CasaProvider>
             <Puerta>
               <StatusBar style={oscuro ? 'light' : 'dark'} />
               <Stack
@@ -76,8 +78,13 @@ export default function Layout() {
                   name="saldar"
                   options={{ title: 'Saldar deuda', presentation: 'modal' }}
                 />
+                <Stack.Screen
+                  name="casas"
+                  options={{ title: 'Mis casas', presentation: 'modal' }}
+                />
               </Stack>
             </Puerta>
+            </CasaProvider>
           </AuthProvider>
         </QueryClientProvider>
       </SafeAreaProvider>

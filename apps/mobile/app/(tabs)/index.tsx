@@ -3,11 +3,13 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { api } from '../../src/api';
-import { useAuth, useGrupo } from '../../src/auth';
+import { useAuth } from '../../src/auth';
+import { useGrupo } from '../../src/casa';
 import {
   Bloque,
   Boton,
   BotonPresionable,
+  Campo,
   Cargando,
   Cifra,
   Error as ErrorVista,
@@ -26,7 +28,6 @@ import { espacio, tipo, usePaleta } from '../../src/theme';
  */
 export default function Inicio() {
   const grupo = useGrupo();
-  const { sesion } = useAuth();
   const router = useRouter();
   const p = usePaleta();
 
@@ -64,14 +65,17 @@ export default function Inicio() {
       refreshControl={<RefreshControl refreshing={recargando} onRefresh={recargar} tintColor={p.apagado} />}
     >
       <View style={estilos.encabezado}>
-        <View style={{ flex: 1 }}>
+        <BotonPresionable onPress={() => router.push('/casas')} style={estilos.selectorCasa}>
+          <View style={estilos.selectorTexto}>
+            <Texto fuerte numberOfLines={1}>
+              {grupo.name}
+            </Texto>
+            <Feather name="chevron-down" size={16} color={p.apagado} />
+          </View>
           <Texto tono="apagado" menor>
-            {grupo.name}
+            Aqui eres {grupo.displayName}
           </Texto>
-          <Texto tono="tinta2" menor>
-            Hola, {sesion?.name.split(' ')[0]}
-          </Texto>
-        </View>
+        </BotonPresionable>
         <BotonPresionable onPress={() => router.push('/ajustes')} style={estilos.iconoCabecera}>
           <Feather name="settings" size={20} color={p.apagado} />
         </BotonPresionable>
@@ -166,17 +170,22 @@ export default function Inicio() {
 function PrimerGrupo() {
   const { refrescar } = useAuth();
   const p = usePaleta();
+  const [nombre, setNombre] = useState('Casa');
   const [creando, setCreando] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const crear = async () => {
+    if (!nombre.trim()) return setError('Ponle un nombre a la casa');
     setCreando(true);
     setError(null);
     try {
-      await api('/api/groups', { method: 'POST', body: { name: 'Casa', defaultCurrency: 'COP' } });
+      await api('/api/groups', {
+        method: 'POST',
+        body: { name: nombre.trim(), defaultCurrency: 'COP' },
+      });
       await refrescar();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'No pudimos crear el grupo');
+      setError(e instanceof Error ? e.message : 'No pudimos crear la casa');
     } finally {
       setCreando(false);
     }
@@ -184,17 +193,19 @@ function PrimerGrupo() {
 
   return (
     <View style={[estilos.primerGrupo, { backgroundColor: p.fondo }]}>
-      <Texto style={[tipo.titulo, { textAlign: 'center' }]}>Empecemos por la casa</Texto>
+      <Texto style={[tipo.titulo, { textAlign: 'center' }]}>Empecemos por una casa</Texto>
       <Texto tono="tinta2" style={{ textAlign: 'center', marginTop: espacio.sm, marginBottom: espacio.xl }}>
-        Creamos un grupo para llevar los gastos compartidos. Despues invitas a quien quieras.
+        Aqui van los gastos compartidos. Despues puedes crear mas casas, cada una con
+        sus propias cuentas.
       </Texto>
+      <Campo etiqueta="Nombre" value={nombre} onChangeText={setNombre} placeholder="Casa" />
       {error ? (
         <Texto tono="debes" menor style={{ marginBottom: espacio.md, textAlign: 'center' }}>
           {error}
         </Texto>
       ) : null}
       <Boton onPress={crear} cargando={creando}>
-        Crear el grupo
+        Crear la casa
       </Boton>
     </View>
   );
@@ -209,6 +220,8 @@ const estilos = StyleSheet.create({
     paddingBottom: espacio.sm,
   },
   iconoCabecera: { padding: espacio.sm },
+  selectorCasa: { flex: 1, paddingVertical: espacio.xs },
+  selectorTexto: { flexDirection: 'row', alignItems: 'center', gap: espacio.xs },
   saldo: { paddingHorizontal: espacio.lg, paddingTop: espacio.lg, paddingBottom: espacio.sm },
   acciones: { flexDirection: 'row', gap: espacio.md, marginTop: espacio.xl },
   sinNada: { paddingHorizontal: espacio.lg, paddingVertical: espacio.lg },

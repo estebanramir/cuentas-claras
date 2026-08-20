@@ -2,7 +2,7 @@ import { parseAmount } from '@cuentas/shared';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
-import { useGrupo } from '../../src/auth';
+import { useGrupo } from '../../src/casa';
 import { api, type Instancia } from '../../src/api';
 import { Boton, Campo, Cargando, Etiqueta, Opciones, Texto } from '../../src/components/ui';
 import { cuandoVence, fechaCorta, hoy, plata } from '../../src/format';

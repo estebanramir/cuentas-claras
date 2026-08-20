@@ -141,7 +141,14 @@ export interface Sesion {
   email: string;
   name: string;
   avatarUrl: string | null;
-  groups: { groupId: string; memberId: string; name: string; defaultCurrency: string; role: string }[];
+  groups: {
+    groupId: string;
+    memberId: string;
+    name: string;
+    displayName: string;
+    defaultCurrency: string;
+    role: string;
+  }[];
 }
 
 export interface BalanceMiembro {

@@ -104,8 +104,4 @@ export function useAuth(): Contexto {
   return contexto;
 }
 
-/** El grupo activo. Con un solo grupo, es siempre el primero. */
-export function useGrupo() {
-  const { sesion } = useAuth();
-  return sesion?.groups[0] ?? null;
-}
+// La casa activa vive en casa.tsx, que necesita useAuth y no al reves.

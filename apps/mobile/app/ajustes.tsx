@@ -1,7 +1,9 @@
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import { api } from '../src/api';
-import { useAuth, useGrupo } from '../src/auth';
+import { useAuth } from '../src/auth';
+import { useGrupo } from '../src/casa';
 import { Bloque, Boton, Campo, Cifra, Etiqueta, Fila, Seccion, Texto } from '../src/components/ui';
 import { registrarDispositivo } from '../src/push';
 import { useInvalidarTodo, useMiembros } from '../src/queries';
@@ -11,6 +13,7 @@ export default function Ajustes() {
   const { sesion, salir, refrescar } = useAuth();
   const grupo = useGrupo();
   const p = usePaleta();
+  const router = useRouter();
   const miembros = useMiembros(grupo?.groupId);
   const invalidar = useInvalidarTodo(grupo?.groupId);
 
@@ -18,6 +21,29 @@ export default function Ajustes() {
   const [correo, setCorreo] = useState('');
   const [agregando, setAgregando] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [miNombre, setMiNombre] = useState(grupo?.displayName ?? '');
+  const [renombrando, setRenombrando] = useState(false);
+  const [errorNombre, setErrorNombre] = useState<string | null>(null);
+
+  const renombrarme = async () => {
+    setErrorNombre(null);
+    if (!grupo) return;
+    setRenombrando(true);
+    try {
+      await api(`/api/groups/${grupo.groupId}/members/${grupo.memberId}`, {
+        method: 'PATCH',
+        body: { displayName: miNombre.trim() },
+      });
+      void miembros.refetch();
+      invalidar();
+      await refrescar();
+    } catch (e) {
+      setErrorNombre(e instanceof Error ? e.message : 'No pudimos cambiar tu nombre');
+    } finally {
+      setRenombrando(false);
+    }
+  };
 
   const agregar = async () => {
     setError(null);
@@ -60,7 +86,32 @@ export default function Ajustes() {
         </Texto>
       </View>
 
-      <Seccion titulo={`Miembros de ${grupo?.name ?? 'el grupo'}`}>
+      <Seccion titulo="Como te ven en esta casa">
+        <View style={estilos.formulario}>
+          <Campo
+            etiqueta={`Tu nombre en ${grupo?.name ?? 'esta casa'}`}
+            value={miNombre}
+            onChangeText={setMiNombre}
+            placeholder={grupo?.displayName ?? ''}
+            ayuda="Solo cambia aqui. En tus otras casas sigues llamandote como alli decidiste."
+          />
+          {errorNombre ? (
+            <Texto tono="debes" menor style={{ marginBottom: espacio.md }}>
+              {errorNombre}
+            </Texto>
+          ) : null}
+          <Boton
+            variante="secundario"
+            onPress={renombrarme}
+            cargando={renombrando}
+            deshabilitado={!miNombre.trim() || miNombre.trim() === grupo?.displayName}
+          >
+            Guardar mi nombre
+          </Boton>
+        </View>
+      </Seccion>
+
+      <Seccion titulo={`Quienes estan en ${grupo?.name ?? 'la casa'}`}>
         <Bloque>
           {(miembros.data ?? []).map((miembro, indice) => (
             <Fila
@@ -109,6 +160,18 @@ export default function Ajustes() {
           </Texto>
           <Boton variante="secundario" onPress={probarAvisos}>
             Registrar este celular
+          </Boton>
+        </View>
+      </Seccion>
+
+      <Seccion titulo="Mis casas">
+        <View style={estilos.formulario}>
+          <Texto tono="tinta2" menor style={{ marginBottom: espacio.md }}>
+            Cada casa lleva cuentas aparte: los gastos y los balances de una no se mezclan
+            con los de otra.
+          </Texto>
+          <Boton variante="secundario" onPress={() => router.push('/casas')}>
+            Cambiar o crear casa
           </Boton>
         </View>
       </Seccion>
