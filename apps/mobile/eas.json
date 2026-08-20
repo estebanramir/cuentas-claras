@@ -5,18 +5,29 @@
       "developmentClient": true,
       "distribution": "internal",
       "android": { "buildType": "apk" },
-      "env": { "EXPO_PUBLIC_API_URL": "http://10.0.2.2:4000" }
+      "env": {
+        "EXPO_PUBLIC_API_URL": "http://10.0.2.2:4000",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "PENDIENTE.apps.googleusercontent.com"
+      }
     },
     "preview": {
       "distribution": "internal",
       "android": { "buildType": "apk" },
-      "channel": "preview"
+      "channel": "preview",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://PENDIENTE.vercel.app",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "PENDIENTE.apps.googleusercontent.com"
+      }
     },
     "production": {
       "distribution": "internal",
       "android": { "buildType": "apk" },
       "channel": "production",
-      "autoIncrement": true
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://PENDIENTE.vercel.app",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "PENDIENTE.apps.googleusercontent.com"
+      }
     }
   },
   "submit": { "production": {} }

@@ -7,6 +7,7 @@ facturas que vencen con sus recordatorios. Al registrar el pago de una factura
 se crea el gasto del grupo, hereda el reparto y los balances se mueven solos.
 
 La arquitectura completa esta en `docs/arquitectura.html`.
+Para publicarla, `DEPLOY.md`.
 
 ## Requisitos
 
