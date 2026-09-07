@@ -41,7 +41,7 @@
       "typedRoutes": true
     },
     "extra": {
-      "apiUrl": "http://10.0.2.2:4000",
+      "apiUrl": "https://cuentas-claras-api.vercel.app",
       "eas": {
         "projectId": "753df2b7-0280-419c-a0e7-99364e6da2bf"
       },

@@ -13,10 +13,19 @@ import * as SecureStore from 'expo-secure-store';
 const LLAVE_ACCESS = 'cuentas.access';
 const LLAVE_REFRESH = 'cuentas.refresh';
 
+/**
+ * El valor por defecto vive en app.json y apunta a produccion a proposito.
+ *
+ * `eas update` no lee el bloque `env` de los perfiles de eas.json —eso es solo
+ * para builds—, asi que una actualizacion publicada se queda sin
+ * EXPO_PUBLIC_API_URL. Si el respaldo fuera la direccion del emulador, cada
+ * OTA dejaria la app sin servidor. El respaldo tiene que ser lo que funciona
+ * para una persona real; el emulador se configura por .env en local.
+ */
 export const API_URL: string =
   process.env.EXPO_PUBLIC_API_URL ??
   (Constants.expoConfig?.extra?.apiUrl as string | undefined) ??
-  'http://10.0.2.2:4000';
+  'https://cuentas-claras-api.vercel.app';
 
 export class ApiError extends Error {
   constructor(
