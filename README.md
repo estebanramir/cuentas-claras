@@ -49,7 +49,7 @@ configurado asi en `app.json`. En un celular fisico hay que apuntar
 
 | Que | Donde se pone | Para que |
 |---|---|---|
-| Cadena de Neon | `DATABASE_URL` y `DIRECT_URL` | Base de datos en produccion |
+| Base de datos | La integracion de Neon en Vercel las inyecta sola | Postgres en produccion |
 | Client id web de Google | `GOOGLE_WEB_CLIENT_ID` y `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID` | Iniciar sesion |
 | Huella SHA-1 de la keystore | Consola de Google Cloud | Que Google Sign-In funcione en el APK |
 | `JWT_SECRET` | `apps/api/.env` y Vercel | Firmar la sesion |

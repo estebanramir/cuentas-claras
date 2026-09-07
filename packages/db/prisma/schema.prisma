@@ -14,9 +14,13 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
+  // Los dos nombres son los que inyecta la integracion de Neon en Vercel, asi
+  // que en produccion nadie tiene que copiar la cadena de conexion a mano.
+  // La agrupada la usa la app; la directa, las migraciones, porque el pooler
+  // no soporta las sentencias que necesitan.
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
 enum SplitMethod {

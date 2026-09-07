@@ -7,13 +7,27 @@ algo del anterior. Calcula una hora la primera vez, casi toda esperando.
 
 ## 1. Neon — la base de datos
 
-1. Crear cuenta en https://neon.tech y un proyecto (region la mas cercana).
-2. En **Connection Details** copiar **las dos** cadenas:
-   - la que dice `-pooler` en el host → va en `DATABASE_URL`
-   - la directa, sin `-pooler` → va en `DIRECT_URL`
+La base se crea **desde Vercel**, no desde la consola de Neon: en una cuenta
+enlazada por la integracion, el boton de crear proyecto en Neon esta
+deshabilitado a proposito.
 
-Las migraciones necesitan conexion directa; la app usa la agrupada para no
-agotar el pool desde funciones serverless.
+En el proyecto de Vercel → **Storage → Create Database → Neon**:
+
+- Region: la mas cercana (Washington, D.C. sirve para Colombia).
+- **Auth: desactivado.** Neon ofrece su propio sistema de sesiones; nosotros ya
+  tenemos Google Sign-In con JWT propio y no lo necesitamos.
+- Plan Free, sin tarjeta.
+- Al conectarla al proyecto, marcar **Create Database Branch For Deployment →
+  Preview**. Sin eso, un despliegue de prueba desde otra rama correria
+  `prisma migrate deploy` contra la base de produccion.
+
+La integracion inyecta sola `DATABASE_URL` y `DATABASE_URL_UNPOOLED`, que son
+exactamente los dos nombres que lee `schema.prisma`. **Nadie tiene que copiar la
+cadena de conexion a ningun lado.**
+
+> Si `DATABASE_URL` ya existe en el proyecto (Vercel la crea vacia al importar
+> el repo, leyendola del `.env.example`), la integracion falla en silencio: se
+> conecta pero no inyecta nada. Hay que borrar esa variable vacia primero.
 
 No hay que crear tablas a mano: el despliegue corre `prisma migrate deploy` y
 aplica `packages/db/prisma/migrations/0_init`, ya probado sobre una base vacia.
@@ -51,11 +65,13 @@ llave de firma.
 
    | Variable | Valor |
    |---|---|
-   | `DATABASE_URL` | la cadena con `-pooler` de Neon |
-   | `DIRECT_URL` | la cadena directa de Neon |
+   | `DATABASE_URL` | la inyecta Neon |
+   | `DATABASE_URL_UNPOOLED` | la inyecta Neon |
    | `JWT_SECRET` | `openssl rand -base64 48` |
    | `CRON_SECRET` | `openssl rand -hex 32` |
    | `GOOGLE_WEB_CLIENT_ID` | el client id web del paso 2b |
+
+   Solo hay que escribir las tres ultimas. Las dos de la base llegan solas.
 
 5. Desplegar y comprobar: `https://TU-APP.vercel.app/api/health` debe responder
    `{"ok":true,"today":"..."}` con la fecha de Bogota.
