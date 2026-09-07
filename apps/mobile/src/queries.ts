@@ -86,6 +86,27 @@ export function useInvalidarTodo(groupId: string | undefined) {
   };
 }
 
+export function useGasto(id: string | undefined) {
+  return useQuery({
+    queryKey: ['gasto', id ?? ''],
+    queryFn: () => api<Gasto>(`/api/expenses/${id}`),
+    enabled: Boolean(id),
+  });
+}
+
+export function useActualizarGasto(groupId: string | undefined) {
+  const invalidar = useInvalidarTodo(groupId);
+  const cliente = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, body }: { id: string; body: unknown }) =>
+      api<Gasto>(`/api/expenses/${id}`, { method: 'PATCH', body }),
+    onSuccess: (_datos, variables) => {
+      void cliente.invalidateQueries({ queryKey: ['gasto', variables.id] });
+      invalidar();
+    },
+  });
+}
+
 export function useCrearGasto(groupId: string | undefined) {
   const invalidar = useInvalidarTodo(groupId);
   return useMutation({

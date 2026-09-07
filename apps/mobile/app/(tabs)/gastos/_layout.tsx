@@ -15,6 +15,7 @@ export default function GastosLayout() {
     >
       <Stack.Screen name="index" options={{ title: 'Gastos' }} />
       <Stack.Screen name="nuevo" options={{ title: 'Nuevo gasto', presentation: 'modal' }} />
+      <Stack.Screen name="[id]" options={{ title: 'Editar gasto' }} />
     </Stack>
   );
 }

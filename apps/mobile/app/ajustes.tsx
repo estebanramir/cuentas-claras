@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, Linking, ScrollView, StyleSheet, View } from 'react-native';
 import { api } from '../src/api';
 import { useAuth } from '../src/auth';
 import { useGrupo } from '../src/grupo';
@@ -68,11 +68,20 @@ export default function Ajustes() {
 
   const probarAvisos = async () => {
     const ok = await registrarDispositivo();
+    if (ok) {
+      Alert.alert('Listo', 'Este celular queda registrado para recibir los recordatorios.');
+      return;
+    }
+    // Android solo pregunta una vez: si se nego, la app ya no puede volver a
+    // pedirlo y hay que ir a los ajustes del sistema. Llevarlo alli de un
+    // toque evita mandar a la persona a buscar la pantalla.
     Alert.alert(
-      ok ? 'Listo' : 'Sin permiso',
-      ok
-        ? 'Este celular queda registrado para recibir los recordatorios.'
-        : 'Activa las notificaciones para Cuentas Claras en los ajustes de Android.',
+      'Sin permiso de notificaciones',
+      'Android no deja volver a preguntarlo desde la app. Actívalo en los ajustes del sistema y vuelve.',
+      [
+        { text: 'Ahora no', style: 'cancel' },
+        { text: 'Abrir ajustes', onPress: () => void Linking.openSettings() },
+      ],
     );
   };
 

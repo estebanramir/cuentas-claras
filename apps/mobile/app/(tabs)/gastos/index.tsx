@@ -98,6 +98,7 @@ export default function Gastos() {
                     <Fila
                       key={gasto.id}
                       primera={indice === 0}
+                      onPress={() => router.push(`/gastos/${gasto.id}`)}
                       titulo={gasto.description}
                       detalle={[
                         gasto.isShared ? nombrePorMiembro.get(gasto.paidByMemberId) ?? '' : 'Personal',
