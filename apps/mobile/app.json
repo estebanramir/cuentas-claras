@@ -49,6 +49,12 @@
       "googleWebClientId": "234129138030-bkn9hbmejffg2bh5o1teti8egm85mvps.apps.googleusercontent.com",
       "router": {}
     },
-    "owner": "esteteteb"
+    "owner": "esteteteb",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/753df2b7-0280-419c-a0e7-99364e6da2bf"
+    }
   }
 }
