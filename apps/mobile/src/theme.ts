@@ -1,16 +1,21 @@
 /**
- * Los tokens de la seccion 11 del documento de arquitectura.
+ * La app es siempre clara, por decision explicita.
  *
- * Reglas que sostienen el aspecto sobrio y que conviene no romper:
+ * Soportar dos temas obliga a verificar cada pantalla dos veces, y en la
+ * practica uno de los dos se mantiene peor que el otro. Comprometerse con uno
+ * y ejecutarlo bien es mas sobrio que tener ambos a medias.
+ *
+ * Reglas que sostienen ese aspecto y que conviene no romper:
  *   - separadores de 1px, nunca sombras
  *   - color solo con significado (verde te deben, rojo debes)
  *   - radios de 4 a 8, y solo donde se toca
  *   - las cifras siempre con numerales tabulares
+ *
+ * Los neutros llevan una desviacion minima hacia el verde del acento: un gris
+ * puro se ve accidental, uno con sesgo se ve elegido.
  */
 
-import { useColorScheme } from 'react-native';
-
-const claro = {
+const paleta = {
   fondo: '#F6F7F5',
   superficie: '#FFFFFF',
   superficie2: '#EFF2EF',
@@ -25,26 +30,9 @@ const claro = {
   teDeben: '#2C6A46',
   debes: '#8E3A33',
   alerta: '#7E5314',
-};
+} as const;
 
-const oscuro: typeof claro = {
-  fondo: '#101412',
-  superficie: '#171D1A',
-  superficie2: '#1E2622',
-  tinta: '#E7EDE9',
-  tinta2: '#B6C2BC',
-  apagado: '#8B9A93',
-  linea: '#2A332E',
-  lineaFuerte: '#3A453F',
-  acento: '#78C4A8',
-  acentoSuave: '#1B2E28',
-  acentoTexto: '#0B1210',
-  teDeben: '#7CC49A',
-  debes: '#D98C84',
-  alerta: '#D3A45F',
-};
-
-export type Paleta = typeof claro;
+export type Paleta = typeof paleta;
 
 export const espacio = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 } as const;
 export const radio = { sm: 4, md: 6, lg: 8 } as const;
@@ -66,9 +54,5 @@ export const tabular = { fontVariant: ['tabular-nums' as const] };
 export const duracion = { rapida: 180, normal: 220 };
 
 export function usePaleta(): Paleta {
-  return useColorScheme() === 'dark' ? oscuro : claro;
-}
-
-export function useEsOscuro(): boolean {
-  return useColorScheme() === 'dark';
+  return paleta;
 }

@@ -8,7 +8,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider, useAuth } from '../src/auth';
 import { decidirRedireccion } from '../src/navegacion';
 import { GrupoProvider } from '../src/grupo';
-import { useEsOscuro, usePaleta } from '../src/theme';
+import { usePaleta } from '../src/theme';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -51,7 +51,6 @@ function Puerta({ children }: { children: React.ReactNode }) {
 export default function Layout() {
   const [cliente] = useState(crearCliente);
   const p = usePaleta();
-  const oscuro = useEsOscuro();
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -60,7 +59,7 @@ export default function Layout() {
           <AuthProvider>
             <GrupoProvider>
             <Puerta>
-              <StatusBar style={oscuro ? 'light' : 'dark'} />
+              <StatusBar style="dark" />
               <Stack
                 screenOptions={{
                   headerStyle: { backgroundColor: p.fondo },

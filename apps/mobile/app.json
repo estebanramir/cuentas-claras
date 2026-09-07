@@ -5,7 +5,7 @@
     "version": "0.1.0",
     "orientation": "portrait",
     "scheme": "cuentasclaras",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "android": {
       "package": "com.estebanramir.cuentasclaras",
       "adaptiveIcon": {
@@ -22,9 +22,6 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#F6F7F5",
-          "dark": {
-            "backgroundColor": "#101412"
-          },
           "image": "./assets/icon.png",
           "imageWidth": 120
         }
