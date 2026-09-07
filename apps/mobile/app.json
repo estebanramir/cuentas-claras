@@ -45,7 +45,8 @@
       "apiUrl": "http://10.0.2.2:4000",
       "eas": {
         "projectId": ""
-      }
+      },
+      "googleWebClientId": "234129138030-bkn9hbmejffg2bh5o1teti8egm85mvps.apps.googleusercontent.com"
     }
   }
 }
