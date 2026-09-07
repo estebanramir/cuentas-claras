@@ -44,9 +44,11 @@
     "extra": {
       "apiUrl": "http://10.0.2.2:4000",
       "eas": {
-        "projectId": ""
+        "projectId": "753df2b7-0280-419c-a0e7-99364e6da2bf"
       },
-      "googleWebClientId": "234129138030-bkn9hbmejffg2bh5o1teti8egm85mvps.apps.googleusercontent.com"
-    }
+      "googleWebClientId": "234129138030-bkn9hbmejffg2bh5o1teti8egm85mvps.apps.googleusercontent.com",
+      "router": {}
+    },
+    "owner": "esteteteb"
   }
 }
