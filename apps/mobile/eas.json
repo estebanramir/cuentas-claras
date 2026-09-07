@@ -22,7 +22,7 @@
       },
       "channel": "preview",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://PENDIENTE.vercel.app",
+        "EXPO_PUBLIC_API_URL": "https://cuentas-claras-api.vercel.app",
         "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "234129138030-bkn9hbmejffg2bh5o1teti8egm85mvps.apps.googleusercontent.com"
       }
     },
@@ -34,7 +34,7 @@
       "channel": "production",
       "autoIncrement": true,
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://PENDIENTE.vercel.app",
+        "EXPO_PUBLIC_API_URL": "https://cuentas-claras-api.vercel.app",
         "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "234129138030-bkn9hbmejffg2bh5o1teti8egm85mvps.apps.googleusercontent.com"
       }
     }
