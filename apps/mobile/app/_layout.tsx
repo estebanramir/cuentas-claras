@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider, useAuth } from '../src/auth';
+import { decidirRedireccion } from '../src/navegacion';
 import { GrupoProvider } from '../src/grupo';
 import { useEsOscuro, usePaleta } from '../src/theme';
 
@@ -36,9 +37,12 @@ function Puerta({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (cargando) return;
     void SplashScreen.hideAsync();
-    const enTabs = segmentos[0] === '(tabs)';
-    if (!sesion && enTabs) router.replace('/sign-in');
-    if (sesion && !enTabs) router.replace('/');
+    const destino = decidirRedireccion({
+      cargando,
+      haySesion: Boolean(sesion),
+      segmentoRaiz: segmentos[0],
+    });
+    if (destino) router.replace(destino);
   }, [cargando, sesion, segmentos, router]);
 
   return <>{children}</>;

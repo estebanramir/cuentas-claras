@@ -6,7 +6,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "test": "pnpm -r --filter @cuentas/shared test",
+    "test": "pnpm --filter @cuentas/shared test && pnpm --filter @cuentas/mobile test",
     "api": "pnpm --filter @cuentas/api dev",
     "mobile": "pnpm --filter @cuentas/mobile start",
     "db:push": "pnpm --filter @cuentas/db push",
